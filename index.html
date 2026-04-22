@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1175,6 +1176,52 @@
       overflow: auto;
     }
 
+
+    .plate-grid { align-items: start; }
+    .plate-preview-box {
+      min-height: 260px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      overflow: hidden;
+    }
+    .plate-photo {
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      border-radius: 14px;
+      display: block;
+    }
+    .plate-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .kpi.compact { min-height: 0; padding: 14px; }
+    .kpi.compact .kpi-value { font-size: 1.2rem; }
+    .plate-item-row {
+      display:flex; align-items:center; gap:10px; justify-content:space-between;
+      padding:10px 0; border-bottom:1px solid var(--border);
+    }
+    .plate-item-row:last-child { border-bottom:none; }
+    .plate-item-main { min-width:0; }
+    .plate-item-title { font-weight:700; color:var(--slate); }
+    .plate-item-meta { font-size:.88rem; color:var(--muted); margin-top:3px; }
+    .plate-item-kcal { font-family:'DM Mono', monospace; color:var(--green3); white-space:nowrap; }
+    .thumb-mini {
+      width: 46px; height: 46px; border-radius: 10px; object-fit: cover; border:1px solid var(--border);
+      background:#fff;
+    }
+    @media (max-width: 900px) {
+      .plate-kpis { grid-template-columns: 1fr; }
+      .plate-preview-box { min-height: 180px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1443,6 +1490,111 @@
           </div>
         </section>
 
+
+        <section class="panel span-12">
+          <span class="section-kicker">foto do prato</span>
+          <h2>Estimativa de calorias por foto</h2>
+          <p class="panel-sub">Tire ou envie a foto do prato e monte uma estimativa rápida com itens e porções. O cálculo é aproximado e serve como apoio visual.</p>
+          <div class="grid-2 plate-grid">
+            <div>
+              <div class="plate-preview-box" id="platePreviewBox">
+                <img id="platePhotoPreview" alt="Foto do prato" class="plate-photo hidden" />
+                <div id="platePhotoPlaceholder" class="empty-note">Nenhuma foto carregada ainda. Você pode tirar uma foto do prato ou enviar uma imagem da galeria.</div>
+              </div>
+              <div class="button-row" style="margin-top:10px;">
+                <label class="action-btn alt" for="platePhotoInput" style="cursor:pointer;">📷 Tirar / enviar foto</label>
+                <input id="platePhotoInput" class="hidden" type="file" accept="image/*" capture="environment" />
+                <button class="ghost-btn" id="clearPlatePhotoBtn">Remover foto</button>
+              </div>
+            </div>
+            <div>
+              <div class="grid-3">
+                <div class="field">
+                  <label for="plateDate">Data</label>
+                  <input id="plateDate" type="date" />
+                </div>
+                <div class="field">
+                  <label for="plateMealType">Refeição</label>
+                  <select id="plateMealType">
+                    <option value="Café da manhã">Café da manhã</option>
+                    <option value="Almoço">Almoço</option>
+                    <option value="Lanche">Lanche</option>
+                    <option value="Jantar">Jantar</option>
+                    <option value="Pós-treino">Pós-treino</option>
+                    <option value="Outro">Outro</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="plateNote">Observação</label>
+                  <input id="plateNote" placeholder="Ex.: prato livre / refeição fora" />
+                </div>
+              </div>
+              <div class="grid-4" style="margin-top:10px;">
+                <div class="field">
+                  <label for="plateFoodSelect">Item</label>
+                  <select id="plateFoodSelect"></select>
+                </div>
+                <div class="field">
+                  <label for="platePortionSelect">Porção visual</label>
+                  <select id="platePortionSelect">
+                    <option value="0.7">Pequena</option>
+                    <option value="1" selected>Média</option>
+                    <option value="1.4">Grande</option>
+                    <option value="2">Muito grande</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="plateQuantityInput">Qtde</label>
+                  <input id="plateQuantityInput" type="number" step="0.5" min="0.5" value="1" />
+                </div>
+                <div class="field">
+                  <label>&nbsp;</label>
+                  <button class="action-btn" id="addPlateItemBtn" style="width:100%;">Adicionar item</button>
+                </div>
+              </div>
+              <div class="plate-kpis">
+                <div class="kpi compact">
+                  <div class="kpi-label">estimativa atual</div>
+                  <div class="kpi-value" id="plateCaloriesKpi">0 kcal</div>
+                </div>
+                <div class="kpi compact">
+                  <div class="kpi-label">itens no prato</div>
+                  <div class="kpi-value" id="plateItemsKpi">0</div>
+                </div>
+                <div class="kpi compact">
+                  <div class="kpi-label">fotos salvas</div>
+                  <div class="kpi-value" id="platePhotoCountKpi">0</div>
+                </div>
+              </div>
+              <div class="list-box" id="plateItemsList" style="margin-top:12px;"></div>
+              <div class="button-row" style="margin-top:12px;">
+                <button class="ghost-btn" id="resetPlateItemsBtn">Limpar estimativa</button>
+                <button class="action-btn" id="savePlateAnalysisBtn">Salvar análise do prato</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel span-12">
+          <span class="section-kicker">histórico alimentar</span>
+          <h2>Fotos e estimativas salvas</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Refeição</th>
+                  <th>Estimativa</th>
+                  <th>Itens</th>
+                  <th>Observação</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="plateHistoryTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
         <section class="panel span-6">
           <span class="section-kicker">nuvem</span>
           <h2>Google Drive</h2>
@@ -1617,7 +1769,8 @@
       weights: 'kanban_dieta_weights_html_v2',
       syncPrefs: 'kanban_dieta_sync_prefs_html_v2',
       lastSync: 'kanban_dieta_last_sync_html_v2',
-      cardOverrides: 'kanban_dieta_card_overrides_html_v1'
+      cardOverrides: 'kanban_dieta_card_overrides_html_v1',
+      plateEntries: 'kanban_dieta_plate_entries_html_v1'
     };
 
     let done = JSON.parse(localStorage.getItem(STORAGE_KEYS.done) || '{}');
@@ -1631,6 +1784,9 @@
     let syncPrefs = JSON.parse(localStorage.getItem(STORAGE_KEYS.syncPrefs) || '{}');
     let lastSyncText = localStorage.getItem(STORAGE_KEYS.lastSync) || '';
     let cardOverrides = JSON.parse(localStorage.getItem(STORAGE_KEYS.cardOverrides) || '{}');
+    let plateEntries = JSON.parse(localStorage.getItem(STORAGE_KEYS.plateEntries) || '[]');
+    let currentPlatePhoto = '';
+    let currentPlateItems = [];
     let editingCardId = null;
 
     let driveTokenClient = null;
@@ -1656,6 +1812,13 @@
     const customItemCategoryEl = document.getElementById('customItemCategory');
     const workoutTableBody = document.getElementById('workoutTableBody');
     const weightTableBody = document.getElementById('weightTableBody');
+    const plateItemsListEl = document.getElementById('plateItemsList');
+    const plateHistoryTableBody = document.getElementById('plateHistoryTableBody');
+    const platePhotoPreview = document.getElementById('platePhotoPreview');
+    const platePhotoPlaceholder = document.getElementById('platePhotoPlaceholder');
+    const plateCaloriesKpi = document.getElementById('plateCaloriesKpi');
+    const plateItemsKpi = document.getElementById('plateItemsKpi');
+    const platePhotoCountKpi = document.getElementById('platePhotoCountKpi');
 
     const googleClientIdInput = document.getElementById('googleClientId');
     const syncFileNameInput = document.getElementById('syncFileName');
@@ -2189,11 +2352,205 @@
       showToast('Item extra adicionado.');
     }
 
+
+    const PLATE_FOOD_DB = [
+      { name:'Arroz integral (1/2 xícara)', kcal:110 },
+      { name:'Arroz branco (1/2 xícara)', kcal:120 },
+      { name:'Quinoa cozida (1/2 xícara)', kcal:110 },
+      { name:'Lentilha cozida (1/2 xícara)', kcal:95 },
+      { name:'Feijão cozido (1/2 xícara)', kcal:90 },
+      { name:'Grão-de-bico (1/2 xícara)', kcal:135 },
+      { name:'Salmão grelhado (100 g)', kcal:210 },
+      { name:'Frango grelhado/desfiado (100 g)', kcal:165 },
+      { name:'Sardinha / peixe assado (100 g)', kcal:190 },
+      { name:'Tilápia / peixe branco (100 g)', kcal:125 },
+      { name:'Ovo (1 unidade)', kcal:78 },
+      { name:'Iogurte grego / natural (1 pote)', kcal:130 },
+      { name:'Queijo de cabra / brie (30 g)', kcal:110 },
+      { name:'Batata-doce cozida (100 g)', kcal:90 },
+      { name:'Pão integral (1 fatia)', kcal:70 },
+      { name:'Wrap integral (1 unidade)', kcal:140 },
+      { name:'Tapioca média', kcal:130 },
+      { name:'Granola sem açúcar (3 colheres)', kcal:130 },
+      { name:'Açaí / bowl pequeno', kcal:180 },
+      { name:'Salada verde / legumes crus', kcal:40 },
+      { name:'Legumes assados / no vapor', kcal:80 },
+      { name:'Abacate (1/4 unidade)', kcal:80 },
+      { name:'Azeite (1 colher de sopa)', kcal:120 },
+      { name:'Oleaginosas (1 punhado)', kcal:180 },
+      { name:'Fruta (1 porção)', kcal:80 },
+      { name:'Vinho tinto (1 taça)', kcal:125 },
+      { name:'Molho / pasta / mel (1 colher)', kcal:60 },
+      { name:'Pizza integral (1 fatia)', kcal:190 },
+      { name:'Feijoada leve (1 concha média)', kcal:180 }
+    ];
+
+    function populatePlateFoodSelect() {
+      const select = document.getElementById('plateFoodSelect');
+      if (!select) return;
+      select.innerHTML = PLATE_FOOD_DB.map((item, idx) => `<option value="${idx}">${item.name} · ~${item.kcal} kcal</option>`).join('');
+    }
+
+    function estimatePlateTotal(items) {
+      return Math.round(items.reduce((sum, item) => sum + Number(item.kcal || 0), 0));
+    }
+
+    function renderPlatePhoto() {
+      if (!platePhotoPreview || !platePhotoPlaceholder) return;
+      if (currentPlatePhoto) {
+        platePhotoPreview.src = currentPlatePhoto;
+        platePhotoPreview.classList.remove('hidden');
+        platePhotoPlaceholder.classList.add('hidden');
+      } else {
+        platePhotoPreview.src = '';
+        platePhotoPreview.classList.add('hidden');
+        platePhotoPlaceholder.classList.remove('hidden');
+      }
+    }
+
+    function renderPlateEstimator() {
+      renderPlatePhoto();
+      const total = estimatePlateTotal(currentPlateItems);
+      if (plateCaloriesKpi) plateCaloriesKpi.textContent = `${total} kcal`;
+      if (plateItemsKpi) plateItemsKpi.textContent = String(currentPlateItems.length);
+      if (platePhotoCountKpi) platePhotoCountKpi.textContent = String(plateEntries.length);
+      if (plateItemsListEl) {
+        plateItemsListEl.innerHTML = currentPlateItems.length ? currentPlateItems.map(item => `
+          <div class="plate-item-row">
+            <div class="plate-item-main">
+              <div class="plate-item-title">${item.name}</div>
+              <div class="plate-item-meta">porção ${item.portionLabel.toLowerCase()} · quantidade ${item.quantity}x · base ${item.baseKcal} kcal</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="plate-item-kcal">${Math.round(item.kcal)} kcal</div>
+              <button class="small-btn" data-remove-plate-item="${item.id}">Excluir</button>
+            </div>
+          </div>`).join('') : '<div class="empty-note">Adicione os itens que aparecem na foto para estimar as calorias do prato.</div>';
+        plateItemsListEl.querySelectorAll('[data-remove-plate-item]').forEach(btn => btn.addEventListener('click', () => removePlateItem(btn.dataset.removePlateItem)));
+      }
+
+      if (plateHistoryTableBody) {
+        const list = [...plateEntries].sort((a,b) => b.date.localeCompare(a.date));
+        plateHistoryTableBody.innerHTML = list.length ? list.map(entry => `
+          <tr>
+            <td>${formatDateBr(entry.date)}</td>
+            <td>${entry.mealType}</td>
+            <td>${Math.round(entry.totalKcal)} kcal</td>
+            <td>${entry.items.length} item(ns)</td>
+            <td>${entry.note || '—'}</td>
+            <td><button class="small-btn" data-remove-plate-entry="${entry.id}">Excluir</button></td>
+          </tr>`).join('') : '<tr><td colspan="6" class="empty-note">Nenhuma análise de prato salva ainda.</td></tr>';
+        plateHistoryTableBody.querySelectorAll('[data-remove-plate-entry]').forEach(btn => btn.addEventListener('click', () => removePlateEntry(btn.dataset.removePlateEntry)));
+      }
+    }
+
+    function handlePlatePhotoFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxW = 960;
+          const scale = Math.min(1, maxW / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          currentPlatePhoto = canvas.toDataURL('image/jpeg', 0.78);
+          saveState();
+          renderPlateEstimator();
+          showToast('Foto do prato carregada.');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function addPlateItem() {
+      const idx = Number(document.getElementById('plateFoodSelect').value);
+      const portionMultiplier = Number(document.getElementById('platePortionSelect').value || 1);
+      const quantity = Number(document.getElementById('plateQuantityInput').value || 1);
+      const item = PLATE_FOOD_DB[idx];
+      if (!item || !quantity) return showToast('Selecione um item e uma quantidade válida.');
+      const portionLabel = document.getElementById('platePortionSelect').selectedOptions[0].textContent;
+      currentPlateItems.push({
+        id: crypto.randomUUID(),
+        name: item.name,
+        baseKcal: item.kcal,
+        portionMultiplier,
+        portionLabel,
+        quantity,
+        kcal: item.kcal * portionMultiplier * quantity
+      });
+      document.getElementById('plateQuantityInput').value = '1';
+      saveState();
+      renderPlateEstimator();
+    }
+
+    function removePlateItem(id) {
+      currentPlateItems = currentPlateItems.filter(item => item.id !== id);
+      saveState();
+      renderPlateEstimator();
+    }
+
+    function clearPlatePhoto() {
+      currentPlatePhoto = '';
+      const input = document.getElementById('platePhotoInput');
+      if (input) input.value = '';
+      saveState();
+      renderPlateEstimator();
+    }
+
+    function resetPlateEstimator() {
+      currentPlateItems = [];
+      currentPlatePhoto = '';
+      document.getElementById('plateNote').value = '';
+      const input = document.getElementById('platePhotoInput');
+      if (input) input.value = '';
+      saveState();
+      renderPlateEstimator();
+      showToast('Estimativa do prato limpa.');
+    }
+
+    function savePlateAnalysis() {
+      const date = document.getElementById('plateDate').value;
+      const mealType = document.getElementById('plateMealType').value;
+      const note = document.getElementById('plateNote').value.trim();
+      if (!date) return showToast('Informe a data da refeição.');
+      if (!currentPlateItems.length) return showToast('Adicione pelo menos um item para estimar as calorias.');
+      plateEntries.push({
+        id: crypto.randomUUID(),
+        date,
+        mealType,
+        note,
+        totalKcal: estimatePlateTotal(currentPlateItems),
+        items: currentPlateItems,
+        photo: currentPlatePhoto || ''
+      });
+      saveState();
+      renderPlateEstimator();
+      document.getElementById('plateNote').value = '';
+      currentPlateItems = [];
+      currentPlatePhoto = '';
+      const input = document.getElementById('platePhotoInput');
+      if (input) input.value = '';
+      renderPlateEstimator();
+      showToast('Análise do prato salva.');
+    }
+
+    function removePlateEntry(id) {
+      plateEntries = plateEntries.filter(item => item.id !== id);
+      saveState();
+      renderPlateEstimator();
+      showToast('Análise removida.');
+    }
+
     function getAppState() {
       return {
-        version: 3,
+        version: 4,
         exportedAt: new Date().toISOString(),
-        done, expanded, filter, currentPage, shoppingChecks, customShopping, workouts, weights, syncPrefs, lastSyncText, cardOverrides
+        done, expanded, filter, currentPage, shoppingChecks, customShopping, workouts, weights, syncPrefs, lastSyncText, cardOverrides, plateEntries
       };
     }
 
@@ -2209,6 +2566,7 @@
       syncPrefs = payload.syncPrefs || syncPrefs || {};
       lastSyncText = payload.lastSyncText || lastSyncText || '';
       cardOverrides = payload.cardOverrides || {};
+      plateEntries = payload.plateEntries || [];
       hydrateSyncPrefs();
       saveState();
       renderAll();
@@ -2386,6 +2744,7 @@ ${JSON.stringify(getAppState())}
       renderKanban();
       renderShopping();
       renderAcademia();
+      renderPlateEstimator();
       setPage(currentPage);
       updateSyncUi();
     }
@@ -2425,6 +2784,11 @@ ${JSON.stringify(getAppState())}
     document.getElementById('addCustomItemBtn').addEventListener('click', addCustomItem);
     document.getElementById('addWorkoutBtn').addEventListener('click', addWorkout);
     document.getElementById('addWeightBtn').addEventListener('click', addWeight);
+    document.getElementById('addPlateItemBtn').addEventListener('click', addPlateItem);
+    document.getElementById('savePlateAnalysisBtn').addEventListener('click', savePlateAnalysis);
+    document.getElementById('resetPlateItemsBtn').addEventListener('click', resetPlateEstimator);
+    document.getElementById('clearPlatePhotoBtn').addEventListener('click', clearPlatePhoto);
+    document.getElementById('platePhotoInput').addEventListener('change', (e) => handlePlatePhotoFile(e.target.files && e.target.files[0]));
     document.getElementById('checkAllShoppingBtn').addEventListener('click', () => {
       allShoppingItems().forEach(item => shoppingChecks[item.id] = true);
       saveState(); renderShopping(); showToast('Lista marcada como comprada.');
@@ -2459,6 +2823,8 @@ ${JSON.stringify(getAppState())}
 
     document.getElementById('workoutDate').value = todayIso();
     document.getElementById('weightDate').value = todayIso();
+    document.getElementById('plateDate').value = todayIso();
+    populatePlateFoodSelect();
     renderSubstitutionGroups();
     hydrateSyncPrefs();
     renderAll();
