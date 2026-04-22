@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kanban da Dieta</title>
+  <title>Kanban da Dieta · Completo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Mono:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
@@ -11,19 +11,24 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --cream:   #faf7f2;
-      --card:    #ffffff;
-      --slate:   #2d3748;
-      --slate2:  #4a5568;
-      --muted:   #718096;
-      --border:  #e8e2d9;
-      --green:   #2d6a4f;
-      --green2:  #52b788;
-      --amber:   #c8841a;
-      --shadow:  0 2px 8px rgba(0,0,0,0.06);
+      --cream: #faf7f2;
+      --card: #ffffff;
+      --slate: #2d3748;
+      --slate2: #4a5568;
+      --muted: #718096;
+      --border: #e8e2d9;
+      --green: #2d6a4f;
+      --green2: #52b788;
+      --green3: #1b4332;
+      --amber: #c8841a;
+      --purple: #5b21b6;
+      --blue: #1d4ed8;
+      --red: #b91c1c;
+      --shadow: 0 2px 8px rgba(0,0,0,0.06);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
       --done-bg: #f0fdf4;
-      --done-txt:#166534;
+      --done-txt: #166534;
+      --panel: #fff;
     }
 
     body {
@@ -33,11 +38,10 @@
       min-height: 100vh;
     }
 
-    .board-wrap {
+    .app {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      overflow: hidden;
     }
 
     .header {
@@ -83,7 +87,8 @@
       border: 1px solid rgba(255,255,255,0.2);
     }
 
-    .filter-bar,
+    .top-nav,
+    .toolbar,
     .stats-bar {
       background: #fff;
       border-bottom: 1px solid var(--border);
@@ -95,27 +100,56 @@
       overflow-x: auto;
     }
 
-    .filter-label,
+    .top-nav { gap: 8px; }
+
+    .nav-btn,
+    .filter-chip,
+    .chip-btn,
+    .action-btn,
+    .ghost-btn,
+    .small-btn,
+    .tab-mini {
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      transition: all .16s ease;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .nav-btn {
+      padding: 8px 14px;
+      border-radius: 14px;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .nav-btn.active {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .toolbar-label,
     .stat-chip,
-    .progress-label {
+    .progress-label,
+    .section-kicker,
+    .field-help,
+    .empty-note,
+    .muted {
       font-size: 11px;
       font-family: 'DM Mono', monospace;
       white-space: nowrap;
     }
 
-    .filter-label { color: #9ca3af; }
+    .toolbar-label { color: #9ca3af; }
 
     .filter-chip {
       padding: 4px 12px;
       border-radius: 14px;
-      border: 1px solid var(--border);
-      background: #fff;
-      cursor: pointer;
       font-size: 11px;
-      font-family: 'DM Mono', monospace;
       color: var(--muted);
       white-space: nowrap;
-      transition: all 0.15s;
     }
 
     .filter-chip.active {
@@ -125,7 +159,6 @@
     }
 
     .stats-bar { gap: 20px; }
-
     .stat-chip {
       display: flex;
       align-items: center;
@@ -140,7 +173,7 @@
       flex-shrink: 0;
     }
 
-    .filter-spacer {
+    .toolbar-spacer {
       margin-left: auto;
       display: flex;
       align-items: center;
@@ -149,25 +182,34 @@
     }
 
     .progress-track,
-    .col-progress-bar {
+    .col-progress-bar,
+    .mini-progress-track {
       height: 5px;
       background: #e5e7eb;
-      border-radius: 3px;
+      border-radius: 999px;
       overflow: hidden;
     }
-
     .progress-track { width: 120px; }
+    .mini-progress-track { width: 100%; height: 8px; }
 
     .progress-fill,
-    .col-progress-fill {
+    .col-progress-fill,
+    .mini-progress-fill {
       height: 100%;
-      border-radius: 3px;
-      transition: width 0.4s ease;
+      border-radius: 999px;
+      transition: width 0.35s ease;
     }
 
-    .progress-fill { background: var(--green2); }
-
+    .progress-fill,
+    .mini-progress-fill { background: var(--green2); }
     .progress-label { color: #6b7280; font-size: 10px; }
+
+    .page {
+      display: none;
+      flex: 1;
+      min-height: 0;
+    }
+    .page.active { display: flex; flex-direction: column; }
 
     .board {
       display: flex;
@@ -193,14 +235,9 @@
       background: #fff;
     }
 
-    .col-today {
-      box-shadow: 0 0 0 2.5px var(--amber), 0 4px 20px rgba(200,132,26,0.18);
-    }
+    .col-today { box-shadow: 0 0 0 2.5px var(--amber), 0 4px 20px rgba(200,132,26,0.18); }
 
-    .col-header {
-      padding: 11px 13px 10px;
-      flex-shrink: 0;
-    }
+    .col-header { padding: 11px 13px 10px; flex-shrink: 0; }
 
     .col-day-row {
       display: flex;
@@ -259,7 +296,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      max-height: calc(100vh - 180px);
+      max-height: calc(100vh - 214px);
     }
 
     .col-cards::-webkit-scrollbar { width: 3px; }
@@ -272,13 +309,15 @@
       overflow: hidden;
       transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
       box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
     }
 
-    .card.clickable { cursor: pointer; }
-    .card.clickable:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .card.clickable { cursor: default; }
+    .card.clickable:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
 
     .card.done {
-      opacity: 0.65;
+      opacity: 0.72;
       background: var(--done-bg);
       border-color: #bbf7d0;
     }
@@ -311,7 +350,9 @@
     }
 
     .card.done .card-title,
-    .card.done .card-body { color: var(--done-txt); }
+    .card.done .card-body,
+    .card.done .card-expanded,
+    .card.done .card-preview { color: var(--done-txt); }
 
     .card-time {
       font-size: 9px;
@@ -344,35 +385,66 @@
       font-weight: bold;
     }
 
-    .card-body {
-      padding: 0 10px 8px;
+    .card-preview {
+      padding: 0 10px 0;
       font-size: 11px;
       color: var(--slate2);
-      line-height: 1.5;
-    }
-
-    .card-body.collapsed {
+      line-height: 1.55;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
       overflow: hidden;
+      min-height: 50px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      white-space: normal;
+      flex: 1 1 auto;
     }
 
-    .card-expanded {
-      padding: 6px 10px 8px;
-      border-top: 1px solid #f0ece6;
-      font-size: 10px;
-      color: var(--muted);
-      font-style: italic;
-      line-height: 1.5;
+    .card.expanded .card-preview {
+      display: block;
+      -webkit-line-clamp: unset;
+      overflow: visible;
+      min-height: 0;
+      max-height: none;
+    }
+
+    .card-preview.truncated {
+      position: relative;
+      padding-right: 12px;
+    }
+
+    .card-preview.truncated::after {
+      content: '…';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95) 55%);
+      padding-left: 10px;
+    }
+
+    .card.expanded .card-preview.truncated::after {
+      display: none;
+    }
+
+    .card.done .card-preview.truncated::after {
+      background: linear-gradient(90deg, rgba(240,253,244,0), rgba(240,253,244,.95) 55%);
     }
 
     .card-actions {
-      padding: 4px 10px 7px;
+      padding: 8px 10px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+      border-top: 1px solid #f4efe8;
+      margin-top: 8px;
+      margin-top: auto;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      background: inherit;
+      flex-wrap: nowrap;
     }
 
     .mini-btn,
@@ -385,8 +457,12 @@
 
     .mini-btn {
       font-size: 9px;
-      color: #9ca3af;
-      padding: 0;
+      color: #6b7280;
+      padding: 2px 0;
+      font-weight: 500;
+      min-width: 44px;
+      text-align: left;
+      flex-shrink: 0;
     }
 
     .status-btn {
@@ -398,6 +474,8 @@
       color: #6b7280;
       font-weight: 500;
       transition: all 0.15s;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .status-btn.done {
@@ -414,13 +492,266 @@
     }
 
     .treino-badge { font-size: 14px; }
-
     .treino-text {
       font-size: 10px;
       color: #fff;
       font-family: 'DM Mono', monospace;
       line-height: 1.4;
     }
+
+    .page-content {
+      padding: 18px 18px 28px;
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-md);
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    .panel h2,
+    .panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: var(--green3);
+    }
+
+    .section-kicker {
+      color: #64748b;
+      letter-spacing: .2px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .panel-sub {
+      color: var(--slate2);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 12px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+
+    .kpi {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fffdfa;
+    }
+    .kpi-label {
+      font-size: 11px;
+      color: #64748b;
+      font-family: 'DM Mono', monospace;
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--green3);
+    }
+    .kpi-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
+    .field,
+    .inline-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+    .field label,
+    .inline-field label {
+      font-size: 11px;
+      color: #6b7280;
+      font-family: 'DM Mono', monospace;
+    }
+    .field input,
+    .field select,
+    .field textarea,
+    .inline-field input,
+    .inline-field select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #d6d3d1;
+      font: inherit;
+      color: var(--slate);
+      background: #fff;
+    }
+    .field textarea { min-height: 86px; resize: vertical; }
+
+    .action-btn,
+    .ghost-btn,
+    .small-btn,
+    .chip-btn,
+    .tab-mini {
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 11px;
+      color: var(--slate2);
+    }
+    .action-btn {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+    .action-btn.alt { background: var(--blue); border-color: var(--blue); }
+    .action-btn.warn { background: var(--amber); border-color: var(--amber); }
+    .ghost-btn:hover,
+    .small-btn:hover,
+    .chip-btn:hover,
+    .tab-mini:hover { background: #f8fafc; }
+    .action-btn:hover { filter: brightness(.96); }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .shopping-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .category {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fffdfa;
+    }
+    .category h4 {
+      font-family: 'Playfair Display', serif;
+      color: var(--green3);
+      font-size: 17px;
+      margin-bottom: 10px;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid #eee7dc;
+      background: #fff;
+    }
+
+    .check-item.done {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      opacity: .82;
+    }
+
+    .check-item input[type="checkbox"] { margin-top: 3px; }
+    .check-item-text { flex: 1; }
+    .check-item-title { font-size: 13px; font-weight: 700; color: var(--slate); }
+    .check-item-meta { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+    .check-item.done .check-item-title,
+    .check-item.done .check-item-meta { color: var(--done-txt); text-decoration: line-through; }
+
+    .list-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .custom-row,
+    .gym-row,
+    .weight-row,
+    .sync-box {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fffdfa;
+    }
+
+    .row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 560px;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f1ece3;
+      text-align: left;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    th {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: #64748b;
+      background: #faf7f2;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      color: #475569;
+    }
+    .pill.good { background: #ecfdf5; color: #166534; border-color: #bbf7d0; }
+    .pill.warn { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+    .pill.info { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
 
     .toast {
       position: fixed;
@@ -438,26 +769,37 @@
       opacity: 0;
       transition: opacity 0.3s;
       pointer-events: none;
+      max-width: min(92vw, 720px);
+      text-align: center;
     }
-
     .toast.show { opacity: 1; }
 
+    .hidden { display: none !important; }
+
+    @media (max-width: 1100px) {
+      .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 12; }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
     @media (max-width: 768px) {
-      .header, .filter-bar, .stats-bar { padding-left: 14px; padding-right: 14px; }
-      .col { width: 86vw; max-width: 280px; }
+      .header, .top-nav, .toolbar, .stats-bar { padding-left: 14px; padding-right: 14px; }
+      .col { width: 86vw; max-width: 290px; }
       .col-cards { max-height: none; }
-      .filter-spacer { margin-left: 0; }
+      .toolbar-spacer { margin-left: 0; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .page-content { padding: 14px; }
+      .table-wrap table { min-width: 520px; }
     }
   </style>
 </head>
 <body>
-  <div class="board-wrap">
+  <div class="app">
     <div class="header">
       <div class="header-left">
         <span style="font-size: 26px;">🌿</span>
         <div>
           <div class="header-title">Kanban da Dieta</div>
-          <div class="header-sub">plano anti-inflamatório · musculação 3×/semana</div>
+          <div class="header-sub">plano anti-inflamatório · musculação 3×/semana · compras · progresso</div>
         </div>
       </div>
       <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
@@ -466,120 +808,370 @@
       </div>
     </div>
 
-    <div class="filter-bar">
-      <span class="filter-label">filtrar:</span>
-      <button class="filter-chip active" data-filter="all">Todos os dias</button>
-      <button class="filter-chip" data-filter="treino">🏋️ Dias de treino</button>
-      <button class="filter-chip" data-filter="vinho">🍷 Noite de vinho</button>
-      <button class="filter-chip" data-filter="descanso">😴 Descanso</button>
-      <div class="filter-spacer">
-        <div class="progress-track"><div class="progress-fill" id="weekProgress"></div></div>
-        <span class="progress-label" id="weekPercent">0% semana</span>
+    <div class="top-nav">
+      <button class="nav-btn active" data-page="kanban">📋 Kanban</button>
+      <button class="nav-btn" data-page="compras">🛒 Lista de compras</button>
+      <button class="nav-btn" data-page="academia">🏋️ Academia & progresso</button>
+      <div class="toolbar-spacer">
+        <span class="pill info" id="syncStatusPill">☁️ local</span>
       </div>
     </div>
 
-    <div class="stats-bar">
-      <div class="stat-chip"><div class="stat-dot" style="background:#2d6a4f"></div>Treino noturno: Seg + Qua</div>
-      <div class="stat-chip"><div class="stat-dot" style="background:#1e40af"></div>Treino manhã: Sáb ou Dom</div>
-      <div class="stat-chip"><div class="stat-dot" style="background:#5b21b6"></div>Vinho: Qui + Sáb</div>
-      <div class="stat-chip"><div class="stat-dot" style="background:#ea580c"></div>Faixa laranja = momento do treino</div>
-      <div class="stat-chip"><div class="stat-dot" style="background:#52b788"></div>Card verde = refeição registrada</div>
+    <div class="page active" id="page-kanban">
+      <div class="toolbar">
+        <span class="toolbar-label">filtrar:</span>
+        <button class="filter-chip active" data-filter="all">Todos os dias</button>
+        <button class="filter-chip" data-filter="treino">🏋️ Dias de treino</button>
+        <button class="filter-chip" data-filter="vinho">🍷 Noite de vinho</button>
+        <button class="filter-chip" data-filter="descanso">😴 Descanso</button>
+        <div class="toolbar-spacer">
+          <div class="progress-track"><div class="progress-fill" id="weekProgress"></div></div>
+          <span class="progress-label" id="weekPercent">0% semana</span>
+        </div>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-chip"><div class="stat-dot" style="background:#2d6a4f"></div>Treino noturno: Seg + Qua</div>
+        <div class="stat-chip"><div class="stat-dot" style="background:#1e40af"></div>Treino manhã: Sáb ou Dom</div>
+        <div class="stat-chip"><div class="stat-dot" style="background:#5b21b6"></div>Vinho: Qui + Sáb</div>
+        <div class="stat-chip"><div class="stat-dot" style="background:#ea580c"></div>Faixa laranja = momento do treino</div>
+        <div class="stat-chip"><div class="stat-dot" style="background:#52b788"></div>Card verde = refeição registrada</div>
+      </div>
+
+      <div class="board" id="board"></div>
     </div>
 
-    <div class="board" id="board"></div>
+    <div class="page" id="page-compras">
+      <div class="page-content">
+        <section class="panel span-7">
+          <span class="section-kicker">plano semanal</span>
+          <h2>Lista de compras</h2>
+          <p class="panel-sub">Itens organizados a partir do cardápio, das substituições e dos alimentos recorrentes do plano. Marque o que já comprou e acrescente itens extras.</p>
+          <div class="shopping-toolbar">
+            <button class="action-btn" id="checkAllShoppingBtn">Marcar tudo</button>
+            <button class="ghost-btn" id="resetShoppingBtn">Limpar marcações</button>
+            <button class="ghost-btn" id="printShoppingBtn">Imprimir / PDF</button>
+          </div>
+          <div class="grid-2" id="shoppingCategories"></div>
+        </section>
+
+        <section class="panel span-5">
+          <span class="section-kicker">complementos</span>
+          <h2>Itens extras</h2>
+          <p class="panel-sub">Use este espaço para incluir o que faltar na semana, como reposições de casa, suplementos ou trocas.</p>
+
+          <div class="custom-row">
+            <div class="grid-2">
+              <div class="field">
+                <label for="customItemName">Item</label>
+                <input id="customItemName" placeholder="Ex.: cúrcuma, whey, folhas verdes" />
+              </div>
+              <div class="field">
+                <label for="customItemCategory">Categoria</label>
+                <select id="customItemCategory"></select>
+              </div>
+            </div>
+            <div class="field" style="margin-top:10px;">
+              <label for="customItemNote">Observação</label>
+              <input id="customItemNote" placeholder="Ex.: comprar 2 unidades / sem açúcar / sem lactose" />
+            </div>
+            <div class="button-row">
+              <button class="action-btn" id="addCustomItemBtn">Adicionar item</button>
+            </div>
+          </div>
+
+          <div class="list-box" id="customShoppingList" style="margin-top:14px;"></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="page" id="page-academia">
+      <div class="page-content">
+        <section class="panel span-4">
+          <span class="section-kicker">resumo</span>
+          <h2>Academia</h2>
+          <div class="grid-2">
+            <div class="kpi">
+              <div class="kpi-label">sequência atual</div>
+              <div class="kpi-value" id="currentStreakKpi">0</div>
+              <div class="kpi-note">treinos consecutivos registrados</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-label">melhor sequência</div>
+              <div class="kpi-value" id="bestStreakKpi">0</div>
+              <div class="kpi-note">seu melhor momento até agora</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-label">treinos no total</div>
+              <div class="kpi-value" id="totalWorkoutsKpi">0</div>
+              <div class="kpi-note">somando todos os registros</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-label">último peso</div>
+              <div class="kpi-value" id="lastWeightKpi">—</div>
+              <div class="kpi-note" id="weightDeltaNote">adicione pesagens para ver a evolução</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel span-8">
+          <span class="section-kicker">registro rápido</span>
+          <h2>Registrar ida na academia</h2>
+          <p class="panel-sub">Registre a data, o tipo de treino e como você se sentiu. O sistema calcula sua sequência automaticamente.</p>
+          <div class="gym-row">
+            <div class="grid-4">
+              <div class="field">
+                <label for="workoutDate">Data</label>
+                <input id="workoutDate" type="date" />
+              </div>
+              <div class="field">
+                <label for="workoutType">Tipo</label>
+                <select id="workoutType">
+                  <option value="Musculação">Musculação</option>
+                  <option value="Cardio">Cardio</option>
+                  <option value="Mobilidade">Mobilidade</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="workoutDuration">Duração</label>
+                <input id="workoutDuration" placeholder="Ex.: 50 min" />
+              </div>
+              <div class="field">
+                <label for="workoutMood">Como foi</label>
+                <select id="workoutMood">
+                  <option value="Excelente">Excelente</option>
+                  <option value="Boa">Boa</option>
+                  <option value="Ok">Ok</option>
+                  <option value="Difícil">Difícil</option>
+                </select>
+              </div>
+            </div>
+            <div class="field" style="margin-top:10px;">
+              <label for="workoutNote">Observações</label>
+              <textarea id="workoutNote" placeholder="Ex.: fiz treino de pernas, aumentei carga, estava mais cansada, etc."></textarea>
+            </div>
+            <div class="button-row">
+              <button class="action-btn" id="addWorkoutBtn">Salvar treino</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel span-6">
+          <span class="section-kicker">peso corporal</span>
+          <h2>Registrar peso</h2>
+          <p class="panel-sub">Adicione pesagens para acompanhar seu progresso ao longo do plano.</p>
+          <div class="weight-row">
+            <div class="grid-3">
+              <div class="field">
+                <label for="weightDate">Data</label>
+                <input id="weightDate" type="date" />
+              </div>
+              <div class="field">
+                <label for="weightValue">Peso (kg)</label>
+                <input id="weightValue" type="number" step="0.1" placeholder="Ex.: 68.4" />
+              </div>
+              <div class="field">
+                <label for="weightNote">Observação</label>
+                <input id="weightNote" placeholder="Ex.: menstruação, pós-treino, jejum" />
+              </div>
+            </div>
+            <div class="button-row">
+              <button class="action-btn" id="addWeightBtn">Salvar peso</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel span-6">
+          <span class="section-kicker">nuvem</span>
+          <h2>Google Drive</h2>
+          <p class="panel-sub">Esta integração fica pronta no HTML, mas depende do seu próprio Client ID OAuth para funcionar em navegador. Depois de configurado, o sistema pode gravar e ler um arquivo JSON do app na pasta oculta appDataFolder do Drive.</p>
+          <div class="sync-box">
+            <div class="grid-2">
+              <div class="field">
+                <label for="googleClientId">Google OAuth Client ID</label>
+                <input id="googleClientId" placeholder="Cole aqui o Client ID do tipo Web application" />
+              </div>
+              <div class="field">
+                <label for="syncFileName">Nome do arquivo de sincronização</label>
+                <input id="syncFileName" value="kanban-dieta-sync.json" />
+              </div>
+            </div>
+            <div class="button-row">
+              <button class="action-btn alt" id="connectDriveBtn">Conectar ao Google Drive</button>
+              <button class="ghost-btn" id="saveDriveBtn">Salvar na nuvem</button>
+              <button class="ghost-btn" id="loadDriveBtn">Sincronizar da nuvem</button>
+              <button class="ghost-btn" id="disconnectDriveBtn">Desconectar</button>
+            </div>
+            <div class="button-row">
+              <button class="small-btn" id="exportJsonBtn">Exportar backup JSON</button>
+              <button class="small-btn" id="importJsonBtn">Importar backup JSON</button>
+              <input id="importJsonInput" class="hidden" type="file" accept="application/json" />
+            </div>
+            <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;">
+              <span class="pill" id="driveConnPill">desconectado</span>
+              <span class="pill" id="lastSyncPill">sem sincronização</span>
+            </div>
+            <p class="field-help" style="margin-top:12px; white-space:normal; line-height:1.6; color:#64748b;">O arquivo gerado guarda refeições marcadas, expansões, lista de compras, itens extras, treinos, pesos e preferências. A sincronização pode ser executada manualmente pelos botões acima.</p>
+          </div>
+        </section>
+
+        <section class="panel span-6">
+          <span class="section-kicker">histórico</span>
+          <h2>Treinos registrados</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Tipo</th>
+                  <th>Duração</th>
+                  <th>Como foi</th>
+                  <th>Observações</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="workoutTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel span-6">
+          <span class="section-kicker">pesagens</span>
+          <h2>Histórico de peso</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Peso</th>
+                  <th>Variação</th>
+                  <th>Observação</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="weightTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
     const DAYS = [
-      {
-        id: 0, key: "seg", short: "SEG", full: "Segunda-feira",
-        tag: "🏋️ Treino noturno", tagColor: "#166534", tagBg: "#dcfce7", headerBg: "#2d6a4f", headerTxt: "#fff",
-        cards: [
-          { id:"s1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Vitamina verde (aveia+espinafre+banana+chia) · Pão integral com abacate e limão" },
-          { id:"s2", emoji:"🥗", title:"Almoço ⭐ Principal", time:"12h – 13h", text:"Arroz integral + lentilha com açafrão · Salmão grelhado no azeite · Salada de rúcula e tomate-cereja" },
-          { id:"s3", emoji:"🏋️", title:"Pré-Treino", time:"15h30 – 16h", text:"☕ Café especial · 1 banana + pasta de amêndoa · Não coma coisa pesada — treino em 2h" },
-          { treino: true, id:"s4", text:"🏋️ MUSCULAÇÃO · ~18h · 150–200ml água a cada 15–20min" },
-          { id:"s5", emoji:"🥤", title:"Pós-Treino", time:"até 19h30", text:"Shake: proteína de ervilha + leite vegetal + banana · OU iogurte grego + mel + aveia · Janela anabólica!" },
-          { id:"s6", emoji:"🌙", title:"Jantar", time:"~20h", text:"Salmão + batata-doce + brócolis no vapor · OU omelete 3 ovos + espinafre + pão de centeio" }
-        ]
-      },
-      {
-        id: 1, key: "ter", short: "TER", full: "Terça-feira",
-        tag: "😴 Descanso", tagColor: "#6b7280", tagBg: "#f3f4f6", headerBg: "#4a5568", headerTxt: "#fff",
-        cards: [
-          { id:"t1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Iogurte natural com mirtilos + granola sem açúcar" },
-          { id:"t2", emoji:"🥗", title:"Almoço", time:"12h – 13h", text:"Quinoa + grão-de-bico ao molho de tomate e cúrcuma · Frango orgânico assado · Brócolis no vapor" },
-          { id:"t3", emoji:"🍎", title:"Lanche", time:"15h – 16h", text:"Nozes + amêndoas · Manga + abacaxi em cubos" },
-          { id:"t4", emoji:"🌙", title:"Jantar", time:"19h – 20h", text:"Bowl de legumes assados (abobrinha, berinjela, pimentão) · Omelete com espinafre e cúrcuma · Chá de camomila" }
-        ]
-      },
-      {
-        id: 2, key: "qua", short: "QUA", full: "Quarta-feira",
-        tag: "🏋️ Treino noturno", tagColor: "#166534", tagBg: "#dcfce7", headerBg: "#2d6a4f", headerTxt: "#fff",
-        cards: [
-          { id:"q1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Aveia cozida com canela + banana + linhaça dourada" },
-          { id:"q2", emoji:"🥗", title:"Almoço ⭐ Principal", time:"12h – 13h", text:"Arroz integral + feijão preto · Sardinha assada com azeite e limão · Salada de couve, cenoura e beterraba" },
-          { id:"q3", emoji:"🏋️", title:"Pré-Treino", time:"15h30 – 16h", text:"☕ Café especial · Pão integral + 2 ovos mexidos · Digestão tranquila até as 18h" },
-          { treino: true, id:"q4", text:"🏋️ MUSCULAÇÃO · ~18h · 150–200ml água a cada 15–20min" },
-          { id:"q5", emoji:"🥤", title:"Pós-Treino", time:"até 19h30", text:"Marmita: arroz branco (aqui branco é OK!) + frango grelhado · OU shake proteico + banana" },
-          { id:"q6", emoji:"🌙", title:"Jantar", time:"~20h", text:"Bowl grão-de-bico + abacate + rúcula + tomate · OU frango + quinoa + salada de folhas verdes" }
-        ]
-      },
-      {
-        id: 3, key: "qui", short: "QUI", full: "Quinta-feira",
-        tag: "🍷 Noite de vinho", tagColor: "#5b21b6", tagBg: "#ede9fe", headerBg: "#4c1d95", headerTxt: "#fff",
-        cards: [
-          { id:"qi1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Ovos mexidos com espinafre e açafrão · Pão integral com abacate" },
-          { id:"qi2", emoji:"🥗", title:"Almoço", time:"12h – 13h", text:"Macarrão integral + molho de tomate caseiro com manjericão · Frango desfiado com cúrcuma · Salada de folhas" },
-          { id:"qi3", emoji:"🍎", title:"Lanche", time:"15h – 16h", text:"☕ Café especial · Papaia + framboesa + banana" },
-          { id:"qi4", emoji:"🍷", title:"Jantar · Vinho", time:"19h – 20h", text:"Tábua: queijo de cabra + parmesão maturado · Azeitonas + amêndoas tostadas + uvas frescas · 1–2 taças vinho tinto seco" }
-        ]
-      },
-      {
-        id: 4, key: "sex", short: "SEX", full: "Sexta-feira",
-        tag: "😴 Descanso", tagColor: "#6b7280", tagBg: "#f3f4f6", headerBg: "#4a5568", headerTxt: "#fff",
-        cards: [
-          { id:"sx1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Panqueca de aveia com banana · Morango + mirtilo frescos" },
-          { id:"sx2", emoji:"🥗", title:"Almoço", time:"12h – 13h", text:"Arroz negro + ervilhas frescas · Salmão ou atum grelhado · Salada de agrião com laranja e nozes" },
-          { id:"sx3", emoji:"🍎", title:"Lanche", time:"15h – 16h", text:"Castanha-do-pará (2 un) + amêndoas · Abacaxi + kiwi fatiados" },
-          { id:"sx4", emoji:"🌙", title:"Jantar", time:"19h – 20h", text:"Wrap integral: frango + abacate + rúcula + mostarda Dijon · Salada verde simples" }
-        ]
-      },
-      {
-        id: 5, key: "sab", short: "SAB", full: "Sábado",
-        tag: "🏋️ Treino manhã + 🍷 Vinho", tagColor: "#1d4ed8", tagBg: "#dbeafe", headerBg: "#1e3a8a", headerTxt: "#fff",
-        cards: [
-          { id:"sb1", emoji:"🍌", title:"Pré-Treino Leve", time:"7h30 – 8h", text:"☕ Café especial + 1 banana · OU 1 iogurte natural + 1 col. mel · Não treinar em jejum!" },
-          { treino: true, id:"sb2", text:"🏋️ MUSCULAÇÃO · 8h30 – 10h · 150–200ml água a cada 15–20min" },
-          { id:"sb3", emoji:"🥤", title:"Pós-Treino = Café", time:"até 10h30", text:"Bowl proteico: iogurte grego + açaí + granola + mirtilos + chia · OU omelete + tapioca com queijo de cabra" },
-          { id:"sb4", emoji:"🥗", title:"Almoço", time:"11h30 – 12h30", text:"Feijoada leve + couve refogada · Arroz integral + laranja · Salada de pepino com azeite e ervas" },
-          { id:"sb5", emoji:"🍎", title:"Lanche", time:"15h", text:"Iogurte natural + mel (1 col.) + amêndoas · Mamão formosa + maracujá" },
-          { id:"sb6", emoji:"🍷", title:"Jantar · Vinho", time:"19h – 20h", text:"Tábua: brie/camembert + queijo de cabra · Uva + figo + castanhas e nozes · 1–2 taças vinho tinto seco" }
-        ]
-      },
-      {
-        id: 6, key: "dom", short: "DOM", full: "Domingo",
-        tag: "🏋️ Treino (se não treinou sáb.) + 🥣 Prep da semana!", tagColor: "#0369a1", tagBg: "#e0f2fe", headerBg: "#075985", headerTxt: "#fff",
-        cards: [
-          { id:"d1", emoji:"🍌", title:"Pré-Treino Leve", time:"7h30 – 8h", text:"☕ Café especial + 1 banana · OU 3–4 tâmaras + 5 nozes" },
-          { treino: true, id:"d2", text:"🏋️ MUSCULAÇÃO · 8h30 – 10h · 150–200ml água a cada 15–20min · (só se não treinou sábado)" },
-          { id:"d3", emoji:"🥤", title:"Pós-Treino = Café", time:"até 10h30", text:"Shake: proteína de ervilha + leite vegetal + banana + chia + cacau · OU panqueca proteica de aveia" },
-          { id:"d4", emoji:"🥗", title:"Almoço", time:"11h30 – 12h30", text:"Arroz integral + lentilha · Peixe branco assado com ervas (tilápia ou pescada) · Legumes no vapor" },
-          { id:"d5", emoji:"🍎", title:"Lanche", time:"15h", text:"Maçã assada com canela e nozes · Chá de camomila com canela" },
-          { id:"d6", emoji:"🌙", title:"Jantar + Prep! 🥣", time:"19h – 20h", text:"Pizza integral: tomate + rúcula + azeite · Salada verde · Aproveite para deixar a overnight oats pronta para segunda!" }
-        ]
-      }
+      { id:0, key:'seg', short:'SEG', full:'Segunda-feira', tag:'🏋️ Treino noturno', tagColor:'#166534', tagBg:'#dcfce7', headerBg:'#2d6a4f', headerTxt:'#fff', cards:[
+        { id:'s1', emoji:'☀️', title:'Café da Manhã', time:'7h – 8h', text:'☕ Café especial · Vitamina verde (aveia + espinafre + banana + chia) · Pão integral com pasta de abacate e limão' },
+        { id:'s2', emoji:'🥗', title:'Almoço ⭐ Principal', time:'12h – 13h', text:'Arroz integral + lentilha com açafrão e cominho · Filé de salmão grelhado com azeite e alho · Salada de rúcula, tomate-cereja e sementes de girassol' },
+        { id:'s3', emoji:'🏋️', title:'Pré-Treino', time:'15h30 – 16h', text:'☕ Café especial · 1 banana média + 1 colher de pasta de amêndoa · carboidrato médio-IG + energia disponível; não comer refeição pesada perto do treino' },
+        { treino:true, id:'s4', text:'🏋️ MUSCULAÇÃO · ~18h · 150–200ml de água a cada 15–20min' },
+        { id:'s5', emoji:'🥤', title:'Pós-Treino', time:'até 19h30', text:'Shake: proteína de ervilha + leite vegetal + banana · OU iogurte grego natural + 1 colher de mel + 3 colheres de aveia · prioridade máxima para não pular a janela anabólica' },
+        { id:'s6', emoji:'🌙', title:'Jantar', time:'~20h', text:'Salmão grelhado + batata-doce cozida + brócolis no vapor · OU omelete de 3 ovos com espinafre + açafrão + pão de centeio' }
+      ]},
+      { id:1, key:'ter', short:'TER', full:'Terça-feira', tag:'😴 Descanso', tagColor:'#6b7280', tagBg:'#f3f4f6', headerBg:'#4a5568', headerTxt:'#fff', cards:[
+        { id:'t1', emoji:'☀️', title:'Café da Manhã', time:'7h – 8h', text:'☕ Café especial · Iogurte natural integral com mirtilos e granola sem açúcar' },
+        { id:'t2', emoji:'🥗', title:'Almoço', time:'12h – 13h', text:'Quinoa + grão-de-bico ao molho de tomate e cúrcuma · Frango orgânico assado com ervas · Brócolis no vapor com azeite e limão' },
+        { id:'t3', emoji:'🍎', title:'Lanche', time:'15h – 16h', text:'Punhado de nozes e amêndoas · Manga + abacaxi em cubos' },
+        { id:'t4', emoji:'🌙', title:'Jantar', time:'19h – 20h', text:'Bowl de legumes assados (abobrinha, berinjela, pimentão) com azeite · Omelete com espinafre e cúrcuma · Chá de camomila com canela' }
+      ]},
+      { id:2, key:'qua', short:'QUA', full:'Quarta-feira', tag:'🏋️ Treino noturno', tagColor:'#166534', tagBg:'#dcfce7', headerBg:'#2d6a4f', headerTxt:'#fff', cards:[
+        { id:'q1', emoji:'☀️', title:'Café da Manhã', time:'7h – 8h', text:'☕ Café especial · Aveia cozida com canela + banana + linhaça dourada' },
+        { id:'q2', emoji:'🥗', title:'Almoço ⭐ Principal', time:'12h – 13h', text:'Arroz integral + feijão preto · Sardinha fresca assada com azeite e limão · Salada de couve-manteiga, cenoura ralada e beterraba' },
+        { id:'q3', emoji:'🏋️', title:'Pré-Treino', time:'15h30 – 16h', text:'☕ Café especial · 1 fatia de pão integral + 2 ovos mexidos · carboidrato complexo + proteína completa com digestão tranquila até as 18h' },
+        { treino:true, id:'q4', text:'🏋️ MUSCULAÇÃO · ~18h · 150–200ml de água a cada 15–20min' },
+        { id:'q5', emoji:'🥤', title:'Pós-Treino', time:'até 19h30', text:'Marmita pronta: arroz branco (aqui branco é ok) + frango grelhado · OU shake proteico + banana' },
+        { id:'q6', emoji:'🌙', title:'Jantar', time:'~20h', text:'Bowl de grão-de-bico + abacate + rúcula + tomate + azeite · OU frango desfiado + quinoa + salada de folhas verdes' }
+      ]},
+      { id:3, key:'qui', short:'QUI', full:'Quinta-feira', tag:'🍷 Noite de vinho', tagColor:'#5b21b6', tagBg:'#ede9fe', headerBg:'#4c1d95', headerTxt:'#fff', cards:[
+        { id:'qi1', emoji:'☀️', title:'Café da Manhã', time:'7h – 8h', text:'☕ Café especial · Ovos mexidos com espinafre e açafrão · Fatia de pão integral com abacate' },
+        { id:'qi2', emoji:'🥗', title:'Almoço', time:'12h – 13h', text:'Macarrão integral + molho de tomate caseiro com manjericão · Frango desfiado com cúrcuma · Salada de folhas verdes mistas com azeite' },
+        { id:'qi3', emoji:'🍎', title:'Lanche', time:'15h – 16h', text:'☕ Café especial · Mix de frutas: papaia + framboesa + banana' },
+        { id:'qi4', emoji:'🍷', title:'Jantar · Vinho', time:'19h – 20h', text:'Tábua com queijo de cabra + parmesão maturado · azeitonas + amêndoas tostadas + uvas frescas · 1–2 taças de vinho tinto seco' }
+      ]},
+      { id:4, key:'sex', short:'SEX', full:'Sexta-feira', tag:'😴 Descanso', tagColor:'#6b7280', tagBg:'#f3f4f6', headerBg:'#4a5568', headerTxt:'#fff', cards:[
+        { id:'sx1', emoji:'☀️', title:'Café da Manhã', time:'7h – 8h', text:'☕ Café especial · Panqueca de aveia com banana · Morango + mirtilos frescos' },
+        { id:'sx2', emoji:'🥗', title:'Almoço', time:'12h – 13h', text:'Arroz negro + ervilhas frescas · Salmão ou atum ao natural grelhado · Salada de agrião com laranja e nozes' },
+        { id:'sx3', emoji:'🍎', title:'Lanche', time:'15h – 16h', text:'Castanha-do-pará (2 unidades) + amêndoas · Abacaxi + kiwi fatiados' },
+        { id:'sx4', emoji:'🌙', title:'Jantar', time:'19h – 20h', text:'Wrap integral com frango desfiado, abacate, rúcula e mostarda Dijon · Salada verde simples' }
+      ]},
+      { id:5, key:'sab', short:'SAB', full:'Sábado', tag:'🏋️ Treino manhã + 🍷 Vinho', tagColor:'#1d4ed8', tagBg:'#dbeafe', headerBg:'#1e3a8a', headerTxt:'#fff', cards:[
+        { id:'sb1', emoji:'🍌', title:'Pré-Treino Leve', time:'7h30 – 8h', text:'☕ Café especial + 1 banana · OU 1 colher de iogurte natural · pequeno, de fácil digestão; não treinar em jejum' },
+        { treino:true, id:'sb2', text:'🏋️ MUSCULAÇÃO · 8h30 – 10h · 150–200ml de água a cada 15–20min' },
+        { id:'sb3', emoji:'🥤', title:'Pós-Treino = Café', time:'até 10h30', text:'Bowl proteico: iogurte grego + açaí + granola sem açúcar + mirtilos + chia · OU omelete de 3 ovos + espinafre + tapioca com queijo de cabra' },
+        { id:'sb4', emoji:'🥗', title:'Almoço', time:'11h30 – 12h30', text:'Feijoada leve com feijão-carioca + couve refogada · Arroz integral + laranja · Salada de pepino com azeite e ervas' },
+        { id:'sb5', emoji:'🍎', title:'Lanche', time:'15h', text:'Iogurte natural com mel (1 colher) + amêndoas · Mamão formosa + maracujá' },
+        { id:'sb6', emoji:'🍷', title:'Jantar · Vinho', time:'19h – 20h', text:'Tábua: brie ou camembert + queijo de cabra · uva, figo fresco ou pera + castanhas e nozes · 1–2 taças de vinho tinto seco' }
+      ]},
+      { id:6, key:'dom', short:'DOM', full:'Domingo', tag:'🏋️ Treino (se não treinou sáb.) + 🥣 Prep da semana!', tagColor:'#0369a1', tagBg:'#e0f2fe', headerBg:'#075985', headerTxt:'#fff', cards:[
+        { id:'d1', emoji:'🍌', title:'Pré-Treino Leve', time:'7h30 – 8h', text:'☕ Café especial + 1 banana · OU 3–4 tâmaras + 5 nozes' },
+        { treino:true, id:'d2', text:'🏋️ MUSCULAÇÃO · 8h30 – 10h · 150–200ml de água a cada 15–20min · só se não treinou sábado' },
+        { id:'d3', emoji:'🥤', title:'Pós-Treino = Café', time:'até 10h30', text:'Shake proteico: proteína de ervilha + leite vegetal + banana + chia + cacau · OU panqueca proteica: 2 ovos + 4 colheres de aveia + banana' },
+        { id:'d4', emoji:'🥗', title:'Almoço', time:'11h30 – 12h30', text:'Arroz integral + lentilha · Peixe branco assado com ervas (tilápia ou pescada) · Legumes no vapor: brócolis, couve-flor e cenoura' },
+        { id:'d5', emoji:'🍎', title:'Lanche', time:'15h', text:'Maçã assada com canela e nozes · Chá de camomila com canela' },
+        { id:'d6', emoji:'🌙', title:'Jantar + Prep! 🥣', time:'19h – 20h', text:'Pizza integral caseira com molho de tomate, rúcula e azeite · Salada verde simples · Aproveite para adiantar preparos da semana' }
+      ]}
     ];
 
-    const STORAGE_DONE = 'kanban_dieta_done_html';
-    const STORAGE_EXPANDED = 'kanban_dieta_expanded_html';
-    const STORAGE_FILTER = 'kanban_dieta_filter_html';
+    const SHOPPING_TEMPLATE = {
+      'Hortifruti': [
+        ['banana', 'pré e pós-treino'], ['espinafre', 'vitaminas, omelete'], ['abacate', 'café da manhã e wraps'], ['limão', 'vitaminas, marinadas e água'],
+        ['rúcula', 'saladas'], ['tomate-cereja', 'saladas'], ['brócolis', 'almoço e jantar'], ['abobrinha', 'legumes assados'], ['berinjela', 'legumes assados'],
+        ['pimentão', 'legumes assados'], ['couve-manteiga', 'quarta e feijoada leve'], ['cenoura', 'saladas e legumes'], ['beterraba', 'saladas'], ['papaia / mamão', 'lanches'],
+        ['abacaxi', 'lanches'], ['manga', 'lanches'], ['maracujá', 'sábado'], ['morango', 'sexta'], ['mirtilos', 'café e bowl'], ['framboesa', 'quinta'], ['uvas', 'quinta/sábado'],
+        ['laranja', 'sexta/sábado'], ['pepino', 'sábado'], ['figo fresco ou pera', 'sábado'], ['maçã', 'domingo'], ['couve-flor', 'domingo'], ['alho', 'temperos'], ['manjericão', 'molho caseiro']
+      ],
+      'Proteínas e laticínios': [
+        ['salmão', 'segunda/sexta'], ['sardinha fresca', 'quarta'], ['frango orgânico / peito de frango', 'almoços, wraps e marmitas'], ['ovos', 'vários dias'], ['tilápia ou pescada', 'domingo'],
+        ['proteína de ervilha ou whey', 'pós-treino'], ['iogurte natural / grego', 'cafés, lanches e bowls'], ['queijo de cabra', 'quinta/sábado'], ['parmesão maturado', 'quinta'], ['brie ou camembert', 'sábado']
+      ],
+      'Grãos, cereais e leguminosas': [
+        ['arroz integral', 'base semanal'], ['arroz negro', 'sexta'], ['arroz branco', 'pós-treino'], ['lentilha', 'segunda/domingo'], ['feijão preto', 'quarta'], ['feijão-carioca', 'sábado'],
+        ['grão-de-bico', 'terça/quarta'], ['quinoa', 'terça/quarta'], ['aveia', 'café da manhã e panquecas'], ['granola sem açúcar', 'cafés e bowls'], ['pão integral', 'cafés e pré-treino'],
+        ['pão de centeio', 'jantares'], ['macarrão integral', 'quinta'], ['wrap integral', 'sexta'], ['tapioca', 'sábado'], ['pizza integral / massa integral', 'domingo']
+      ],
+      'Oleaginosas, sementes e gorduras boas': [
+        ['chia', 'vitaminas e bowls'], ['linhaça dourada', 'quarta'], ['sementes de girassol', 'saladas'], ['amêndoas', 'lanches e tábuas'], ['nozes', 'lanches'], ['castanha-do-pará', 'sexta'],
+        ['azeite extra virgem', 'uso diário'], ['pasta de amêndoa', 'pré-treino'], ['azeitonas', 'quinta'], ['castanhas variadas', 'sábado']
+      ],
+      'Bebidas e complementos': [
+        ['café especial', 'rotina'], ['leite vegetal de aveia/coco/amêndoas', 'vitaminas e shakes'], ['vinho tinto seco', 'quinta e sábado'], ['chá de camomila', 'noite'], ['chá de hibisco', 'domingo'],
+        ['mel', 'pós-treino e lanches'], ['cacau 100%', 'shake de domingo']
+      ],
+      'Temperos e preparo': [
+        ['açafrão / cúrcuma', 'base anti-inflamatória'], ['cominho', 'segunda'], ['canela', 'cafés, aveia e maçã'], ['gengibre', 'chá e preparos'], ['pimenta-preta', 'junto da cúrcuma'], ['mostarda Dijon', 'sexta'], ['sal e ervas', 'uso geral']
+      ]
+    };
 
-    let done = JSON.parse(localStorage.getItem(STORAGE_DONE) || '{}');
-    let expanded = JSON.parse(localStorage.getItem(STORAGE_EXPANDED) || '{}');
-    let filter = localStorage.getItem(STORAGE_FILTER) || 'all';
+    const STORAGE_KEYS = {
+      done: 'kanban_dieta_done_html_v2',
+      expanded: 'kanban_dieta_expanded_html_v2',
+      filter: 'kanban_dieta_filter_html_v2',
+      page: 'kanban_dieta_page_html_v2',
+      shopping: 'kanban_dieta_shopping_html_v2',
+      customShopping: 'kanban_dieta_custom_shopping_html_v2',
+      workouts: 'kanban_dieta_workouts_html_v2',
+      weights: 'kanban_dieta_weights_html_v2',
+      syncPrefs: 'kanban_dieta_sync_prefs_html_v2',
+      lastSync: 'kanban_dieta_last_sync_html_v2'
+    };
+
+    let done = JSON.parse(localStorage.getItem(STORAGE_KEYS.done) || '{}');
+    let expanded = JSON.parse(localStorage.getItem(STORAGE_KEYS.expanded) || '{}');
+    let filter = localStorage.getItem(STORAGE_KEYS.filter) || 'all';
+    let currentPage = localStorage.getItem(STORAGE_KEYS.page) || 'kanban';
+    let shoppingChecks = JSON.parse(localStorage.getItem(STORAGE_KEYS.shopping) || '{}');
+    let customShopping = JSON.parse(localStorage.getItem(STORAGE_KEYS.customShopping) || '[]');
+    let workouts = JSON.parse(localStorage.getItem(STORAGE_KEYS.workouts) || '[]');
+    let weights = JSON.parse(localStorage.getItem(STORAGE_KEYS.weights) || '[]');
+    let syncPrefs = JSON.parse(localStorage.getItem(STORAGE_KEYS.syncPrefs) || '{}');
+    let lastSyncText = localStorage.getItem(STORAGE_KEYS.lastSync) || '';
+
+    let driveTokenClient = null;
+    let driveAccessToken = null;
+    let driveFileId = null;
 
     const board = document.getElementById('board');
     const weekBadge = document.getElementById('weekBadge');
@@ -588,24 +1180,66 @@
     const weekPercent = document.getElementById('weekPercent');
     const toast = document.getElementById('toast');
     const filterButtons = document.querySelectorAll('.filter-chip');
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const pages = {
+      kanban: document.getElementById('page-kanban'),
+      compras: document.getElementById('page-compras'),
+      academia: document.getElementById('page-academia')
+    };
+
+    const shoppingCategoriesEl = document.getElementById('shoppingCategories');
+    const customShoppingListEl = document.getElementById('customShoppingList');
+    const customItemCategoryEl = document.getElementById('customItemCategory');
+    const workoutTableBody = document.getElementById('workoutTableBody');
+    const weightTableBody = document.getElementById('weightTableBody');
+
+    const googleClientIdInput = document.getElementById('googleClientId');
+    const syncFileNameInput = document.getElementById('syncFileName');
+    const driveConnPill = document.getElementById('driveConnPill');
+    const lastSyncPill = document.getElementById('lastSyncPill');
+    const syncStatusPill = document.getElementById('syncStatusPill');
 
     function showToast(msg) {
       toast.textContent = msg;
       toast.classList.add('show');
       clearTimeout(showToast._timer);
-      showToast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
+      showToast._timer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function todayIso() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function formatDateBr(iso) {
+      if (!iso) return '—';
+      const [y,m,d] = iso.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEYS.done, JSON.stringify(done));
+      localStorage.setItem(STORAGE_KEYS.expanded, JSON.stringify(expanded));
+      localStorage.setItem(STORAGE_KEYS.filter, filter);
+      localStorage.setItem(STORAGE_KEYS.page, currentPage);
+      localStorage.setItem(STORAGE_KEYS.shopping, JSON.stringify(shoppingChecks));
+      localStorage.setItem(STORAGE_KEYS.customShopping, JSON.stringify(customShopping));
+      localStorage.setItem(STORAGE_KEYS.workouts, JSON.stringify(workouts));
+      localStorage.setItem(STORAGE_KEYS.weights, JSON.stringify(weights));
+      localStorage.setItem(STORAGE_KEYS.syncPrefs, JSON.stringify(syncPrefs));
+      localStorage.setItem(STORAGE_KEYS.lastSync, lastSyncText || '');
     }
 
     function getTodayColumnIndex() {
       const todayIdx = new Date().getDay();
-      const dayMap = { 1:0, 2:1, 3:2, 4:3, 5:4, 6:5, 0:6 };
+      const dayMap = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
       return dayMap[todayIdx] ?? 0;
     }
 
-    function saveState() {
-      localStorage.setItem(STORAGE_DONE, JSON.stringify(done));
-      localStorage.setItem(STORAGE_EXPANDED, JSON.stringify(expanded));
-      localStorage.setItem(STORAGE_FILTER, filter);
+    function setPage(nextPage) {
+      currentPage = nextPage;
+      Object.entries(pages).forEach(([key, el]) => el.classList.toggle('active', key === nextPage));
+      navButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.page === nextPage));
+      saveState();
     }
 
     function toggleDone(cardId, dayKey) {
@@ -614,16 +1248,14 @@
       const dayCards = DAYS.find(d => d.key === dayKey).cards.filter(c => !c.treino);
       const allDone = dayCards.every(c => done[c.id]);
       saveState();
-      render();
-      if (nextValue) {
-        showToast(allDone ? '🎉 Dia completo! Arrasou!' : '✓ Refeição registrada!');
-      }
+      renderKanban();
+      if (nextValue) showToast(allDone ? '🎉 Dia completo! Arrasou!' : '✓ Refeição registrada!');
     }
 
     function toggleExpand(cardId) {
       expanded[cardId] = !expanded[cardId];
       saveState();
-      render();
+      renderKanban();
     }
 
     function matchesFilter(day) {
@@ -637,11 +1269,10 @@
     function renderHeaderStats() {
       const todayColIdx = getTodayColumnIndex();
       const totalMeals = DAYS.flatMap(d => d.cards.filter(c => !c.treino)).length;
-      const doneMeals = Object.values(done).filter(Boolean).length;
+      const doneMeals = DAYS.flatMap(d => d.cards.filter(c => !c.treino)).filter(c => done[c.id]).length;
       const todayMeals = DAYS[todayColIdx].cards.filter(c => !c.treino);
       const todayDoneMeals = todayMeals.filter(c => done[c.id]).length;
       const pct = totalMeals ? Math.round((doneMeals / totalMeals) * 100) : 0;
-
       weekBadge.textContent = `${doneMeals}/${totalMeals} refeições ✓`;
       todayBadge.textContent = `Hoje: ${todayDoneMeals}/${todayMeals.length} refeições`;
       weekProgress.style.width = `${pct}%`;
@@ -649,9 +1280,13 @@
     }
 
     function renderFilters() {
-      filterButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.filter === filter);
-      });
+      filterButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
+    }
+
+    function buildPreviewText(text, limit=98) {
+      if (!text) return { preview:'', truncated:false };
+      if (text.length <= limit) return { preview:text, truncated:false };
+      return { preview:text.slice(0, limit).trim(), truncated:true };
     }
 
     function createCard(day, card) {
@@ -662,21 +1297,17 @@
           <div class="treino-inner">
             <div class="treino-badge">💪</div>
             <div class="treino-text">${card.text}</div>
-          </div>
-        `;
+          </div>`;
         return treinoCard;
       }
 
       const isDone = !!done[card.id];
       const isExpanded = !!expanded[card.id];
+      const preview = card.text;
+      const truncated = card.text.length > 72;
 
       const cardEl = document.createElement('div');
-      cardEl.className = `card clickable${isDone ? ' done' : ''}`;
-
-      const bodyClass = isExpanded ? '' : 'collapsed';
-      const checkClass = isDone ? 'card-check checked' : 'card-check';
-      const statusClass = isDone ? 'status-btn done' : 'status-btn';
-
+      cardEl.className = `card clickable${isDone ? ' done' : ''}${isExpanded ? ' expanded' : ''}`;
       cardEl.innerHTML = `
         <div class="card-top">
           <div class="card-emoji">${card.emoji}</div>
@@ -684,33 +1315,18 @@
             <div class="card-title">${card.title}</div>
             <div class="card-time">${card.time}</div>
           </div>
-          <div class="${checkClass}">${isDone ? '✓' : ''}</div>
+          <div class="card-check ${isDone ? 'checked' : ''}">${isDone ? '✓' : ''}</div>
         </div>
-        <div class="card-body ${bodyClass}">${card.text}</div>
-        <div class="card-actions">
+        <div class="card-preview ${truncated && !isExpanded ? 'truncated' : ''}">${preview}</div>
+        <div class="card-actions compact-actions">
           <button class="mini-btn">${isExpanded ? '▲ menos' : '▼ mais'}</button>
-          <button class="${statusClass}">${isDone ? '✓ feito' : 'registrar'}</button>
-        </div>
-      `;
+          <button class="status-btn ${isDone ? 'done' : ''}">${isDone ? '✓ feito' : 'registrar'}</button>
+        </div>`;
 
-      const top = cardEl.querySelector('.card-top');
-      const miniBtn = cardEl.querySelector('.mini-btn');
-      const check = cardEl.querySelector('.card-check');
-      const statusBtn = cardEl.querySelector('.status-btn');
-
-      top.addEventListener('click', () => toggleExpand(card.id));
-      miniBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleExpand(card.id);
-      });
-      check.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleDone(card.id, day.key);
-      });
-      statusBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleDone(card.id, day.key);
-      });
+      cardEl.querySelector('.mini-btn').addEventListener('click', (e) => { e.stopPropagation(); toggleExpand(card.id); });
+      cardEl.querySelector('.card-preview').addEventListener('click', () => toggleExpand(card.id));
+      cardEl.querySelector('.card-check').addEventListener('click', (e) => { e.stopPropagation(); toggleDone(card.id, day.key); });
+      cardEl.querySelector('.status-btn').addEventListener('click', (e) => { e.stopPropagation(); toggleDone(card.id, day.key); });
 
       return cardEl;
     }
@@ -742,34 +1358,459 @@
             <div class="col-progress-fill" style="width:${pct}%; background:${pct === 100 ? '#22c55e' : 'rgba(255,255,255,0.6)'}"></div>
           </div>
           <div class="col-progress-label">${doneCount}/${mealCards.length} refeições ${pct === 100 ? '🎉' : ''}</div>
-        </div>
-      `;
+        </div>`;
 
       const cardsWrap = document.createElement('div');
       cardsWrap.className = 'col-cards';
       day.cards.forEach(card => cardsWrap.appendChild(createCard(day, card)));
-
       col.appendChild(header);
       col.appendChild(cardsWrap);
       return col;
     }
 
-    function render() {
+    function renderKanban() {
       renderHeaderStats();
       renderFilters();
       board.innerHTML = '';
       DAYS.filter(matchesFilter).forEach(day => board.appendChild(createColumn(day)));
     }
 
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filter = btn.dataset.filter;
-        saveState();
-        render();
+    function allShoppingItems() {
+      const builtins = Object.entries(SHOPPING_TEMPLATE).flatMap(([category, items]) =>
+        items.map(([name, note], idx) => ({ id:`base-${category}-${idx}`, category, name, note, custom:false }))
+      );
+      const customs = customShopping.map(item => ({ ...item, custom:true }));
+      return [...builtins, ...customs];
+    }
+
+    function ensureCustomCategoryOptions() {
+      customItemCategoryEl.innerHTML = Object.keys(SHOPPING_TEMPLATE).map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    function toggleShopping(id) {
+      shoppingChecks[id] = !shoppingChecks[id];
+      saveState();
+      renderShopping();
+    }
+
+    function removeCustomItem(id) {
+      customShopping = customShopping.filter(item => item.id !== id);
+      delete shoppingChecks[id];
+      saveState();
+      renderShopping();
+    }
+
+    function renderShopping() {
+      ensureCustomCategoryOptions();
+      shoppingCategoriesEl.innerHTML = '';
+      const categoryNames = Object.keys(SHOPPING_TEMPLATE);
+      categoryNames.forEach(category => {
+        const panel = document.createElement('div');
+        panel.className = 'category';
+        const items = allShoppingItems().filter(item => item.category === category);
+        panel.innerHTML = `<h4>${category}</h4><div class="check-list"></div>`;
+        const list = panel.querySelector('.check-list');
+        items.forEach(item => {
+          const doneItem = !!shoppingChecks[item.id];
+          const row = document.createElement('div');
+          row.className = `check-item${doneItem ? ' done' : ''}`;
+          row.innerHTML = `
+            <input type="checkbox" ${doneItem ? 'checked' : ''} />
+            <div class="check-item-text">
+              <div class="check-item-title">${item.name}</div>
+              <div class="check-item-meta">${item.note || '—'}</div>
+            </div>
+            ${item.custom ? '<button class="small-btn">Excluir</button>' : ''}`;
+          row.querySelector('input').addEventListener('change', () => toggleShopping(item.id));
+          const removeBtn = row.querySelector('.small-btn');
+          if (removeBtn) removeBtn.addEventListener('click', () => removeCustomItem(item.id));
+          list.appendChild(row);
+        });
+        shoppingCategoriesEl.appendChild(panel);
       });
+
+      customShoppingListEl.innerHTML = customShopping.length ? customShopping.map(item => `
+        <div class="check-item ${shoppingChecks[item.id] ? 'done' : ''}">
+          <input type="checkbox" ${shoppingChecks[item.id] ? 'checked' : ''} data-custom-check="${item.id}" />
+          <div class="check-item-text">
+            <div class="check-item-title">${item.name}</div>
+            <div class="check-item-meta">${item.category} · ${item.note || 'sem observação'}</div>
+          </div>
+          <button class="small-btn" data-remove-custom="${item.id}">Excluir</button>
+        </div>`).join('') : '<div class="empty-note">Nenhum item extra adicionado ainda.</div>';
+
+      customShoppingListEl.querySelectorAll('[data-custom-check]').forEach(el => el.addEventListener('change', () => toggleShopping(el.dataset.customCheck)));
+      customShoppingListEl.querySelectorAll('[data-remove-custom]').forEach(el => el.addEventListener('click', () => removeCustomItem(el.dataset.removeCustom)));
+    }
+
+    function sortedWorkouts() {
+      return [...workouts].sort((a,b) => a.date.localeCompare(b.date));
+    }
+
+    function sortedWeights() {
+      return [...weights].sort((a,b) => a.date.localeCompare(b.date));
+    }
+
+    function dateDiffInDays(a, b) {
+      const ms = 24 * 60 * 60 * 1000;
+      const d1 = new Date(a + 'T00:00:00');
+      const d2 = new Date(b + 'T00:00:00');
+      return Math.round((d2 - d1) / ms);
+    }
+
+    function computeWorkoutStreaks() {
+      const items = sortedWorkouts();
+      if (!items.length) return { current:0, best:0, total:0 };
+      let best = 1, run = 1;
+      for (let i = 1; i < items.length; i++) {
+        const diff = dateDiffInDays(items[i-1].date, items[i].date);
+        if (diff === 1) run += 1;
+        else if (diff === 0) run = run;
+        else run = 1;
+        best = Math.max(best, run);
+      }
+      let current = 1;
+      for (let i = items.length - 1; i > 0; i--) {
+        const diff = dateDiffInDays(items[i-1].date, items[i].date);
+        if (diff === 1) current += 1;
+        else break;
+      }
+      return { current, best, total: items.length };
+    }
+
+    function renderAcademia() {
+      const streaks = computeWorkoutStreaks();
+      document.getElementById('currentStreakKpi').textContent = streaks.current;
+      document.getElementById('bestStreakKpi').textContent = streaks.best;
+      document.getElementById('totalWorkoutsKpi').textContent = streaks.total;
+
+      const weightItems = sortedWeights();
+      const last = weightItems[weightItems.length - 1];
+      const first = weightItems[0];
+      document.getElementById('lastWeightKpi').textContent = last ? `${Number(last.value).toFixed(1)} kg` : '—';
+      if (last && first && weightItems.length > 1) {
+        const delta = Number(last.value) - Number(first.value);
+        const sign = delta > 0 ? '+' : '';
+        document.getElementById('weightDeltaNote').textContent = `variação total: ${sign}${delta.toFixed(1)} kg desde ${formatDateBr(first.date)}`;
+      } else {
+        document.getElementById('weightDeltaNote').textContent = 'adicione mais pesagens para ver a evolução';
+      }
+
+      const workoutsDesc = [...workouts].sort((a,b) => b.date.localeCompare(a.date));
+      workoutTableBody.innerHTML = workoutsDesc.length ? workoutsDesc.map(w => `
+        <tr>
+          <td>${formatDateBr(w.date)}</td>
+          <td>${w.type}</td>
+          <td>${w.duration || '—'}</td>
+          <td>${w.mood}</td>
+          <td>${w.note || '—'}</td>
+          <td><button class="small-btn" data-remove-workout="${w.id}">Excluir</button></td>
+        </tr>`).join('') : '<tr><td colspan="6" class="empty-note">Nenhum treino registrado ainda.</td></tr>';
+      workoutTableBody.querySelectorAll('[data-remove-workout]').forEach(btn => btn.addEventListener('click', () => removeWorkout(btn.dataset.removeWorkout)));
+
+      const weightsDesc = [...weights].sort((a,b) => b.date.localeCompare(a.date));
+      weightTableBody.innerHTML = weightsDesc.length ? weightsDesc.map((w, idx) => {
+        const sorted = sortedWeights();
+        const pos = sorted.findIndex(item => item.id === w.id);
+        const prev = pos > 0 ? sorted[pos - 1] : null;
+        const delta = prev ? (Number(w.value) - Number(prev.value)) : null;
+        const deltaTxt = delta === null ? '—' : `${delta > 0 ? '+' : ''}${delta.toFixed(1)} kg`;
+        return `
+          <tr>
+            <td>${formatDateBr(w.date)}</td>
+            <td>${Number(w.value).toFixed(1)} kg</td>
+            <td>${deltaTxt}</td>
+            <td>${w.note || '—'}</td>
+            <td><button class="small-btn" data-remove-weight="${w.id}">Excluir</button></td>
+          </tr>`;
+      }).join('') : '<tr><td colspan="5" class="empty-note">Nenhuma pesagem registrada ainda.</td></tr>';
+      weightTableBody.querySelectorAll('[data-remove-weight]').forEach(btn => btn.addEventListener('click', () => removeWeight(btn.dataset.removeWeight)));
+    }
+
+    function removeWorkout(id) {
+      workouts = workouts.filter(item => item.id !== id);
+      saveState();
+      renderAcademia();
+      showToast('Treino removido.');
+    }
+
+    function removeWeight(id) {
+      weights = weights.filter(item => item.id !== id);
+      saveState();
+      renderAcademia();
+      showToast('Peso removido.');
+    }
+
+    function addWorkout() {
+      const date = document.getElementById('workoutDate').value;
+      const type = document.getElementById('workoutType').value;
+      const duration = document.getElementById('workoutDuration').value.trim();
+      const mood = document.getElementById('workoutMood').value;
+      const note = document.getElementById('workoutNote').value.trim();
+      if (!date) return showToast('Informe a data do treino.');
+      workouts.push({ id: crypto.randomUUID(), date, type, duration, mood, note });
+      saveState();
+      renderAcademia();
+      document.getElementById('workoutDuration').value = '';
+      document.getElementById('workoutNote').value = '';
+      showToast('Treino registrado com sucesso.');
+    }
+
+    function addWeight() {
+      const date = document.getElementById('weightDate').value;
+      const value = document.getElementById('weightValue').value;
+      const note = document.getElementById('weightNote').value.trim();
+      if (!date || !value) return showToast('Informe a data e o peso.');
+      weights.push({ id: crypto.randomUUID(), date, value:Number(value), note });
+      saveState();
+      renderAcademia();
+      document.getElementById('weightValue').value = '';
+      document.getElementById('weightNote').value = '';
+      showToast('Peso registrado com sucesso.');
+    }
+
+    function addCustomItem() {
+      const name = document.getElementById('customItemName').value.trim();
+      const category = document.getElementById('customItemCategory').value;
+      const note = document.getElementById('customItemNote').value.trim();
+      if (!name) return showToast('Digite o nome do item.');
+      customShopping.push({ id: crypto.randomUUID(), name, category, note });
+      document.getElementById('customItemName').value = '';
+      document.getElementById('customItemNote').value = '';
+      saveState();
+      renderShopping();
+      showToast('Item extra adicionado.');
+    }
+
+    function getAppState() {
+      return {
+        version: 2,
+        exportedAt: new Date().toISOString(),
+        done, expanded, filter, currentPage, shoppingChecks, customShopping, workouts, weights, syncPrefs, lastSyncText
+      };
+    }
+
+    function applyAppState(payload) {
+      done = payload.done || {};
+      expanded = payload.expanded || {};
+      filter = payload.filter || 'all';
+      currentPage = payload.currentPage || 'kanban';
+      shoppingChecks = payload.shoppingChecks || {};
+      customShopping = payload.customShopping || [];
+      workouts = payload.workouts || [];
+      weights = payload.weights || [];
+      syncPrefs = payload.syncPrefs || syncPrefs || {};
+      lastSyncText = payload.lastSyncText || lastSyncText || '';
+      hydrateSyncPrefs();
+      saveState();
+      renderAll();
+    }
+
+    function exportJson() {
+      const blob = new Blob([JSON.stringify(getAppState(), null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `kanban-dieta-backup-${todayIso()}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function hydrateSyncPrefs() {
+      googleClientIdInput.value = syncPrefs.googleClientId || '';
+      syncFileNameInput.value = syncPrefs.syncFileName || 'kanban-dieta-sync.json';
+      updateSyncUi();
+    }
+
+    function updateSyncUi() {
+      const connected = !!driveAccessToken;
+      driveConnPill.textContent = connected ? 'conectado' : 'desconectado';
+      driveConnPill.className = `pill ${connected ? 'good' : ''}`.trim();
+      lastSyncPill.textContent = lastSyncText ? `última sync: ${lastSyncText}` : 'sem sincronização';
+      syncStatusPill.textContent = connected ? '☁️ drive conectado' : '☁️ local';
+      syncStatusPill.className = `pill ${connected ? 'good' : 'info'}`;
+    }
+
+    function storeSyncPrefsFromInputs() {
+      syncPrefs.googleClientId = googleClientIdInput.value.trim();
+      syncPrefs.syncFileName = syncFileNameInput.value.trim() || 'kanban-dieta-sync.json';
+      saveState();
+      updateSyncUi();
+    }
+
+    async function initDriveClient() {
+      storeSyncPrefsFromInputs();
+      const clientId = syncPrefs.googleClientId;
+      if (!clientId) {
+        showToast('Cole o Google OAuth Client ID para conectar.');
+        return false;
+      }
+      if (!window.google || !google.accounts || !google.accounts.oauth2) {
+        showToast('Biblioteca do Google ainda não carregou. Tente novamente em alguns segundos.');
+        return false;
+      }
+      driveTokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'https://www.googleapis.com/auth/drive.appdata',
+        callback: (response) => {
+          if (response.error) {
+            showToast('Não foi possível autorizar o Google Drive.');
+            return;
+          }
+          driveAccessToken = response.access_token;
+          updateSyncUi();
+          showToast('Google Drive conectado.');
+        }
+      });
+      return true;
+    }
+
+    async function connectDrive() {
+      const ok = await initDriveClient();
+      if (!ok) return;
+      driveTokenClient.requestAccessToken({ prompt: driveAccessToken ? '' : 'consent' });
+    }
+
+    async function driveFetch(path, options={}) {
+      if (!driveAccessToken) throw new Error('Sem conexão com o Google Drive.');
+      const headers = Object.assign({}, options.headers || {}, { Authorization: `Bearer ${driveAccessToken}` });
+      const res = await fetch(path, { ...options, headers });
+      if (!res.ok) throw new Error(`Drive API ${res.status}`);
+      return res;
+    }
+
+    async function ensureDriveFile() {
+      if (driveFileId) return driveFileId;
+      const fileName = syncPrefs.syncFileName || 'kanban-dieta-sync.json';
+      const q = encodeURIComponent(`name='${fileName.replace(/'/g, "\'")}' and 'appDataFolder' in parents and trashed=false`);
+      const listRes = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=appDataFolder&fields=files(id,name)`);
+      const list = await listRes.json();
+      if (list.files && list.files.length) {
+        driveFileId = list.files[0].id;
+        return driveFileId;
+      }
+      const metadata = { name: fileName, parents: ['appDataFolder'], mimeType: 'application/json' };
+      const boundary = '-------314159265358979323846';
+      const body =
+        `--${boundary}
+Content-Type: application/json; charset=UTF-8
+
+${JSON.stringify(metadata)}
+` +
+        `--${boundary}
+Content-Type: application/json
+
+${JSON.stringify(getAppState())}
+--${boundary}--`;
+      const createRes = await driveFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name', {
+        method: 'POST',
+        headers: { 'Content-Type': `multipart/related; boundary=${boundary}` },
+        body
+      });
+      const created = await createRes.json();
+      driveFileId = created.id;
+      return driveFileId;
+    }
+
+    async function saveToDrive() {
+      try {
+        if (!driveAccessToken) return showToast('Conecte o Google Drive primeiro.');
+        storeSyncPrefsFromInputs();
+        const fileId = await ensureDriveFile();
+        await driveFetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(getAppState())
+        });
+        lastSyncText = `${formatDateBr(todayIso())} ${new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
+        saveState();
+        updateSyncUi();
+        showToast('Dados salvos na nuvem.');
+      } catch (err) {
+        console.error(err);
+        showToast('Falha ao salvar na nuvem. Verifique o Client ID e a autorização.');
+      }
+    }
+
+    async function loadFromDrive() {
+      try {
+        if (!driveAccessToken) return showToast('Conecte o Google Drive primeiro.');
+        storeSyncPrefsFromInputs();
+        const fileId = await ensureDriveFile();
+        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
+        const data = await res.json();
+        applyAppState(data);
+        lastSyncText = `${formatDateBr(todayIso())} ${new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
+        saveState();
+        updateSyncUi();
+        showToast('Dados sincronizados da nuvem.');
+      } catch (err) {
+        console.error(err);
+        showToast('Falha ao sincronizar da nuvem.');
+      }
+    }
+
+    function disconnectDrive() {
+      driveAccessToken = null;
+      driveFileId = null;
+      updateSyncUi();
+      showToast('Google Drive desconectado neste navegador.');
+    }
+
+    function renderAll() {
+      renderKanban();
+      renderShopping();
+      renderAcademia();
+      setPage(currentPage);
+      updateSyncUi();
+    }
+
+    filterButtons.forEach(btn => btn.addEventListener('click', () => {
+      filter = btn.dataset.filter;
+      saveState();
+      renderKanban();
+    }));
+
+    navButtons.forEach(btn => btn.addEventListener('click', () => setPage(btn.dataset.page)));
+
+    document.getElementById('addCustomItemBtn').addEventListener('click', addCustomItem);
+    document.getElementById('addWorkoutBtn').addEventListener('click', addWorkout);
+    document.getElementById('addWeightBtn').addEventListener('click', addWeight);
+    document.getElementById('checkAllShoppingBtn').addEventListener('click', () => {
+      allShoppingItems().forEach(item => shoppingChecks[item.id] = true);
+      saveState(); renderShopping(); showToast('Lista marcada como comprada.');
+    });
+    document.getElementById('resetShoppingBtn').addEventListener('click', () => {
+      shoppingChecks = {}; saveState(); renderShopping(); showToast('Marcações da lista limpas.');
+    });
+    document.getElementById('printShoppingBtn').addEventListener('click', () => window.print());
+
+    document.getElementById('exportJsonBtn').addEventListener('click', exportJson);
+    document.getElementById('importJsonBtn').addEventListener('click', () => document.getElementById('importJsonInput').click());
+    document.getElementById('importJsonInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        applyAppState(data);
+        showToast('Backup importado com sucesso.');
+      } catch {
+        showToast('Não foi possível importar o arquivo JSON.');
+      }
+      e.target.value = '';
     });
 
-    render();
+    googleClientIdInput.addEventListener('change', storeSyncPrefsFromInputs);
+    syncFileNameInput.addEventListener('change', storeSyncPrefsFromInputs);
+    document.getElementById('connectDriveBtn').addEventListener('click', connectDrive);
+    document.getElementById('saveDriveBtn').addEventListener('click', saveToDrive);
+    document.getElementById('loadDriveBtn').addEventListener('click', loadFromDrive);
+    document.getElementById('disconnectDriveBtn').addEventListener('click', disconnectDrive);
+
+    document.getElementById('workoutDate').value = todayIso();
+    document.getElementById('weightDate').value = todayIso();
+    hydrateSyncPrefs();
+    renderAll();
   </script>
 </body>
 </html>
