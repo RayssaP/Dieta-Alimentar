@@ -936,7 +936,230 @@
       .panel h2 { font-size: 18px; }
       .panel-sub { font-size: 11px; }
       .table-wrap table { min-width: 520px; }
+      .edit-dialog { width: 100%; max-height: 92vh; border-radius: 18px; }
+      .edit-head { padding: 14px 14px 12px; }
+      .edit-title { font-size: 18px; }
+      .edit-sub { font-size: 11px; }
+      .edit-body { grid-template-columns: 1fr; padding: 14px; gap: 12px; }
+      .edit-panel { padding: 12px; border-radius: 14px; }
+      .edit-textarea { min-height: 220px; font-size: 13px; }
+      .card-secondary-actions { gap: 6px; }
     }
+
+
+    .edit-btn {
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background: #fff;
+      color: #6b7280;
+      font-weight: 500;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      white-space: nowrap;
+      font-family: 'DM Mono', monospace;
+      cursor: pointer;
+    }
+
+    .edit-btn:hover,
+    .status-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .card-secondary-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .edit-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(17,24,39,0.46);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 60;
+    }
+
+    .edit-modal.open { display: flex; }
+
+    .edit-dialog {
+      width: min(920px, 100%);
+      max-height: min(88vh, 920px);
+      overflow: auto;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.22);
+      border: 1px solid var(--border);
+    }
+
+    .edit-head {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .edit-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: var(--green3);
+    }
+
+    .edit-sub {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .edit-close {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 12px;
+      min-width: 40px;
+      height: 40px;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--slate2);
+    }
+
+    .edit-body {
+      padding: 18px 20px 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 18px;
+    }
+
+    .edit-panel {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #fffdfa;
+      padding: 16px;
+    }
+
+    .edit-panel h3 {
+      font-size: 14px;
+      color: var(--green3);
+      margin-bottom: 10px;
+    }
+
+    .edit-panel p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .edit-textarea {
+      width: 100%;
+      min-height: 260px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--slate);
+      background: #fff;
+      font-family: 'Lato', sans-serif;
+    }
+
+    .edit-textarea:focus {
+      outline: none;
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(147,197,253,0.18);
+    }
+
+    .helper-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .sub-groups {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sub-group {
+      border: 1px solid #f1ebe2;
+      background: #fff;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .sub-group-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--green3);
+      margin-bottom: 8px;
+    }
+
+    .sub-chip-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sub-chip {
+      border: 1px solid var(--border);
+      background: #faf7f2;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 11px;
+      color: var(--slate2);
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.35;
+    }
+
+    .sub-chip:hover {
+      background: #eefbf4;
+      border-color: #b7e4c7;
+      color: var(--green3);
+    }
+
+    .edit-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .edit-actions-right {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sub-original {
+      white-space: pre-wrap;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--slate2);
+      background: #fff;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      max-height: 160px;
+      overflow: auto;
+    }
+
   </style>
 </head>
 <body>
@@ -1001,6 +1224,41 @@
             <div class="mobile-legend-item"><span class="mobile-legend-dot" style="background:#ea580c"></span><span>Faixa laranja = momento do treino</span></div>
             <div class="mobile-legend-item"><span class="mobile-legend-dot" style="background:#52b788"></span><span>Card verde = refeição registrada</span></div>
           </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="edit-modal" id="editCardModal" aria-hidden="true">
+      <div class="edit-dialog" role="dialog" aria-modal="true" aria-labelledby="editCardTitle">
+        <div class="edit-head">
+          <div>
+            <div class="edit-title" id="editCardTitle">Editar refeição</div>
+            <div class="edit-sub" id="editCardSubtitle">Personalize o conteúdo do card com base na sua tabela de substituições.</div>
+          </div>
+          <button class="edit-close" id="closeEditCardModal" aria-label="Fechar edição">✕</button>
+        </div>
+        <div class="edit-body">
+          <section class="edit-panel">
+            <h3>Conteúdo do card</h3>
+            <textarea class="edit-textarea" id="editCardTextarea" placeholder="Edite aqui a refeição..."></textarea>
+            <div class="helper-note">Dica: toque em uma substituição à direita para inserir um texto padrão no ponto do cursor.</div>
+            <div class="edit-footer">
+              <div class="helper-note" id="editCardStatus">Sem alterações salvas ainda.</div>
+              <div class="edit-actions-right">
+                <button class="ghost-btn" id="resetCardTextBtn">Restaurar original</button>
+                <button class="action-btn" id="saveCardTextBtn">Salvar conteúdo</button>
+              </div>
+            </div>
+          </section>
+          <aside class="edit-panel">
+            <h3>Tabela de substituições rápidas</h3>
+            <p>Toque em uma sugestão para inserir um texto padrão no conteúdo do card. Depois ajuste livremente do seu jeito.</p>
+            <div class="sub-groups" id="substitutionGroups"></div>
+            <h3 style="margin-top:14px;">Texto original</h3>
+            <div class="sub-original" id="editCardOriginalText"></div>
+          </aside>
         </div>
       </div>
     </div>
@@ -1343,7 +1601,8 @@
       workouts: 'kanban_dieta_workouts_html_v2',
       weights: 'kanban_dieta_weights_html_v2',
       syncPrefs: 'kanban_dieta_sync_prefs_html_v2',
-      lastSync: 'kanban_dieta_last_sync_html_v2'
+      lastSync: 'kanban_dieta_last_sync_html_v2',
+      cardOverrides: 'kanban_dieta_card_overrides_html_v1'
     };
 
     let done = JSON.parse(localStorage.getItem(STORAGE_KEYS.done) || '{}');
@@ -1356,6 +1615,8 @@
     let weights = JSON.parse(localStorage.getItem(STORAGE_KEYS.weights) || '[]');
     let syncPrefs = JSON.parse(localStorage.getItem(STORAGE_KEYS.syncPrefs) || '{}');
     let lastSyncText = localStorage.getItem(STORAGE_KEYS.lastSync) || '';
+    let cardOverrides = JSON.parse(localStorage.getItem(STORAGE_KEYS.cardOverrides) || '{}');
+    let editingCardId = null;
 
     let driveTokenClient = null;
     let driveAccessToken = null;
@@ -1391,6 +1652,13 @@
     const mobileFilterButtons = document.querySelectorAll('[data-mobile-filter]');
     const filterModal = document.getElementById('filterModal');
     const legendModal = document.getElementById('legendModal');
+    const editCardModal = document.getElementById('editCardModal');
+    const editCardTextarea = document.getElementById('editCardTextarea');
+    const editCardOriginalText = document.getElementById('editCardOriginalText');
+    const editCardTitle = document.getElementById('editCardTitle');
+    const editCardSubtitle = document.getElementById('editCardSubtitle');
+    const editCardStatus = document.getElementById('editCardStatus');
+    const substitutionGroups = document.getElementById('substitutionGroups');
 
     function showToast(msg) {
       toast.textContent = msg;
@@ -1420,6 +1688,7 @@
       localStorage.setItem(STORAGE_KEYS.weights, JSON.stringify(weights));
       localStorage.setItem(STORAGE_KEYS.syncPrefs, JSON.stringify(syncPrefs));
       localStorage.setItem(STORAGE_KEYS.lastSync, lastSyncText || '');
+      localStorage.setItem(STORAGE_KEYS.cardOverrides, JSON.stringify(cardOverrides));
     }
 
     function getTodayColumnIndex() {
@@ -1485,6 +1754,127 @@
       return { preview:text.slice(0, limit).trim(), truncated:true };
     }
 
+    const SUBSTITUTION_GROUPS = {
+      'Proteínas': [
+        'Substituição: salmão fresco → sardinha, atum ao natural ou cavala.',
+        'Substituição: frango orgânico → peru, ovo caipira ou tilápia.',
+        'Substituição: omelete / ovos → tofu firme, edamame ou tempeh.',
+        'Substituição: grão-de-bico → lentilha vermelha, feijão preto ou ervilha.',
+        'Substituição: queijo de cabra → brie, camembert ou parmesão maturado.',
+        'Substituição: whey → proteína de ervilha isolada ou hemp.'
+      ],
+      'Carboidratos': [
+        'Substituição: arroz branco → arroz integral, negro ou vermelho.',
+        'Substituição: pão francês → pão de centeio ou integral 100%.',
+        'Substituição: macarrão comum → macarrão integral ou de grão-de-bico.',
+        'Substituição: farinha branca → farinha de aveia, amêndoa ou grão-de-bico.',
+        'Substituição: tapioca simples → tapioca com ovo e recheio proteico.',
+        'Substituição: batata inglesa → batata-doce, inhame ou mandioca.'
+      ],
+      'Gorduras e acompanhamentos': [
+        'Substituição: óleo de soja/milho/canola → azeite extra virgem.',
+        'Substituição: manteiga comum → azeite ou ghee.',
+        'Substituição: margarina → pasta de abacate ou tahine.',
+        'Substituição: creme de leite → leite de coco light.',
+        'Substituição: maionese industrial → maionese de abacate ou homus caseiro.',
+        'Substituição: amendoim torrado com sal → nozes, amêndoas ou castanha-do-pará.'
+      ],
+      'Bebidas, lanches e temperos': [
+        'Substituição: refrigerante ou suco industrial → água com limão e hortelã.',
+        'Substituição: leite de vaca integral → leite vegetal de aveia, coco ou amêndoas.',
+        'Substituição: iogurte com polpa industrial → iogurte natural + fruta in natura.',
+        'Substituição: chips / salgadinho → edamame salgado ou grão-de-bico tostado.',
+        'Substituição: ketchup / shoyu industrial → molho de tomate caseiro ou shoyu low-sodium.',
+        'Substituição: adoçante artificial → estévia pura ou eritritol.'
+      ]
+    };
+
+    function getCardById(cardId) {
+      for (const day of DAYS) {
+        const found = day.cards.find(card => card.id === cardId);
+        if (found) return { day, card: found };
+      }
+      return null;
+    }
+
+    function getCardCurrentText(card) {
+      return cardOverrides[card.id] || card.text;
+    }
+
+    function insertAtCursor(textarea, text) {
+      const start = textarea.selectionStart ?? textarea.value.length;
+      const end = textarea.selectionEnd ?? textarea.value.length;
+      const before = textarea.value.slice(0, start);
+      const after = textarea.value.slice(end);
+      const prefix = before && !before.endsWith('\n') ? '\n' : '';
+      const suffix = after && !after.startsWith('\n') ? '\n' : '';
+      textarea.value = `${before}${prefix}${text}${suffix}${after}`;
+      const nextPos = (before + prefix + text).length;
+      textarea.focus();
+      textarea.setSelectionRange(nextPos, nextPos);
+    }
+
+    function renderSubstitutionGroups() {
+      substitutionGroups.innerHTML = '';
+      Object.entries(SUBSTITUTION_GROUPS).forEach(([groupName, items]) => {
+        const group = document.createElement('div');
+        group.className = 'sub-group';
+        group.innerHTML = `<div class="sub-group-title">${groupName}</div><div class="sub-chip-wrap"></div>`;
+        const wrap = group.querySelector('.sub-chip-wrap');
+        items.forEach(item => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'sub-chip';
+          btn.textContent = item;
+          btn.addEventListener('click', () => insertAtCursor(editCardTextarea, item));
+          wrap.appendChild(btn);
+        });
+        substitutionGroups.appendChild(group);
+      });
+    }
+
+    function openEditCard(cardId) {
+      const found = getCardById(cardId);
+      if (!found) return;
+      editingCardId = cardId;
+      const { day, card } = found;
+      editCardTitle.textContent = `Editar · ${card.title}`;
+      editCardSubtitle.textContent = `${day.full} · ${card.time} · personalize a refeição com substituições do plano.`;
+      editCardTextarea.value = getCardCurrentText(card);
+      editCardOriginalText.textContent = card.text;
+      editCardStatus.textContent = cardOverrides[card.id] ? 'Este card já foi personalizado.' : 'Sem alterações salvas ainda.';
+      renderSubstitutionGroups();
+      openMobileModal(editCardModal);
+      setTimeout(() => editCardTextarea.focus(), 30);
+    }
+
+    function saveCardEdit() {
+      if (!editingCardId) return;
+      const found = getCardById(editingCardId);
+      if (!found) return;
+      const original = found.card.text.trim();
+      const nextText = editCardTextarea.value.trim();
+      if (!nextText) return showToast('O conteúdo do card não pode ficar vazio.');
+      if (nextText === original) delete cardOverrides[editingCardId];
+      else cardOverrides[editingCardId] = nextText;
+      saveState();
+      renderKanban();
+      closeMobileModal(editCardModal);
+      showToast('Conteúdo do card atualizado.');
+    }
+
+    function resetCardEdit() {
+      if (!editingCardId) return;
+      const found = getCardById(editingCardId);
+      if (!found) return;
+      delete cardOverrides[editingCardId];
+      editCardTextarea.value = found.card.text;
+      editCardStatus.textContent = 'Texto original restaurado.';
+      saveState();
+      renderKanban();
+      showToast('Texto original restaurado.');
+    }
+
     function createCard(day, card) {
       if (card.treino) {
         const treinoCard = document.createElement('div');
@@ -1499,8 +1889,9 @@
 
       const isDone = !!done[card.id];
       const isExpanded = !!expanded[card.id];
-      const preview = card.text;
-      const truncated = card.text.length > 72;
+      const currentText = getCardCurrentText(card);
+      const preview = currentText;
+      const truncated = currentText.length > 72;
 
       const cardEl = document.createElement('div');
       cardEl.className = `card clickable${isDone ? ' done' : ''}${isExpanded ? ' expanded' : ''}`;
@@ -1516,13 +1907,18 @@
         <div class="card-preview ${truncated && !isExpanded ? 'truncated' : ''}">${preview}</div>
         <div class="card-actions compact-actions">
           <button class="mini-btn">${isExpanded ? '▲ menos' : '▼ mais'}</button>
-          <button class="status-btn ${isDone ? 'done' : ''}">${isDone ? '✓ feito' : 'registrar'}</button>
+          <div class="card-secondary-actions">
+            ${isExpanded ? '<button class="edit-btn">editar</button>' : ''}
+            <button class="status-btn ${isDone ? 'done' : ''}">${isDone ? '✓ feito' : 'registrar'}</button>
+          </div>
         </div>`;
 
       cardEl.querySelector('.mini-btn').addEventListener('click', (e) => { e.stopPropagation(); toggleExpand(card.id); });
       cardEl.querySelector('.card-preview').addEventListener('click', () => toggleExpand(card.id));
       cardEl.querySelector('.card-check').addEventListener('click', (e) => { e.stopPropagation(); toggleDone(card.id, day.key); });
       cardEl.querySelector('.status-btn').addEventListener('click', (e) => { e.stopPropagation(); toggleDone(card.id, day.key); });
+      const editBtn = cardEl.querySelector('.edit-btn');
+      if (editBtn) editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditCard(card.id); });
 
       return cardEl;
     }
@@ -1780,9 +2176,9 @@
 
     function getAppState() {
       return {
-        version: 2,
+        version: 3,
         exportedAt: new Date().toISOString(),
-        done, expanded, filter, currentPage, shoppingChecks, customShopping, workouts, weights, syncPrefs, lastSyncText
+        done, expanded, filter, currentPage, shoppingChecks, customShopping, workouts, weights, syncPrefs, lastSyncText, cardOverrides
       };
     }
 
@@ -1797,6 +2193,7 @@
       weights = payload.weights || [];
       syncPrefs = payload.syncPrefs || syncPrefs || {};
       lastSyncText = payload.lastSyncText || lastSyncText || '';
+      cardOverrides = payload.cardOverrides || {};
       hydrateSyncPrefs();
       saveState();
       renderAll();
@@ -1967,6 +2364,7 @@ ${JSON.stringify(getAppState())}
     function closeAllMobileModals() {
       closeMobileModal(filterModal);
       closeMobileModal(legendModal);
+      closeMobileModal(editCardModal);
     }
 
     function renderAll() {
@@ -1999,11 +2397,15 @@ ${JSON.stringify(getAppState())}
       const id = btn.getAttribute('data-close-modal');
       closeMobileModal(document.getElementById(id));
     }));
-    [filterModal, legendModal].forEach(modal => {
+    [filterModal, legendModal, editCardModal].forEach(modal => {
       if (!modal) return;
       modal.addEventListener('click', (e) => { if (e.target === modal) closeMobileModal(modal); });
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllMobileModals(); });
+
+    document.getElementById('closeEditCardModal').addEventListener('click', () => closeMobileModal(editCardModal));
+    document.getElementById('saveCardTextBtn').addEventListener('click', saveCardEdit);
+    document.getElementById('resetCardTextBtn').addEventListener('click', resetCardEdit);
 
     document.getElementById('addCustomItemBtn').addEventListener('click', addCustomItem);
     document.getElementById('addWorkoutBtn').addEventListener('click', addWorkout);
@@ -2042,6 +2444,7 @@ ${JSON.stringify(getAppState())}
 
     document.getElementById('workoutDate').value = todayIso();
     document.getElementById('weightDate').value = todayIso();
+    renderSubstitutionGroups();
     hydrateSyncPrefs();
     renderAll();
   </script>
