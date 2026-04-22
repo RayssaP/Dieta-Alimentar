@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
-
-/* ─── Google Fonts ─────────────────────────────────────────────────────────── */
-const FontLink = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Mono:wght@400;500&family=Lato:wght@300;400;700&display=swap');
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kanban da Dieta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Mono:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -16,461 +19,757 @@ const FontLink = () => (
       --border:  #e8e2d9;
       --green:   #2d6a4f;
       --green2:  #52b788;
-      --green-l: #d8f3dc;
       --amber:   #c8841a;
-      --amber-l: #fef3c7;
-      --orange:  #c2410c;
-      --orange-l:#fff0e6;
-      --violet:  #5b21b6;
-      --violet-l:#ede9fe;
-      --blue:    #1e40af;
-      --blue-l:  #dbeafe;
-      --gray-l:  #f1ede8;
-      --done-bg: #f0fdf4;
-      --done-txt:#166534;
       --shadow:  0 2px 8px rgba(0,0,0,0.06);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+      --done-bg: #f0fdf4;
+      --done-txt:#166534;
     }
 
-    body { background: var(--cream); font-family: 'Lato', sans-serif; }
+    body {
+      background: var(--cream);
+      font-family: 'Lato', sans-serif;
+      color: var(--slate);
+      min-height: 100vh;
+    }
 
     .board-wrap {
-      display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow: hidden;
     }
 
-    /* Header */
     .header {
       background: var(--green);
       padding: 14px 24px 12px;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
       flex-shrink: 0;
       box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      flex-wrap: wrap;
     }
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .header-title { font-family: 'Playfair Display', serif; font-size: 20px; color: #fff; letter-spacing: 0.3px; }
-    .header-sub { font-size: 11px; color: #a7f3c0; margin-top: 1px; font-family: 'DM Mono', monospace; }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: #fff;
+      letter-spacing: 0.3px;
+    }
+
+    .header-sub {
+      font-size: 11px;
+      color: #a7f3c0;
+      margin-top: 1px;
+      font-family: 'DM Mono', monospace;
+    }
+
     .week-badge {
-      font-family: 'DM Mono', monospace; font-size: 11px;
-      background: rgba(255,255,255,0.15); color: #fff;
-      padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* Stats bar */
+    .filter-bar,
     .stats-bar {
-      background: #fff; border-bottom: 1px solid var(--border);
-      padding: 8px 24px; display: flex; align-items: center; gap: 20px;
-      flex-shrink: 0; overflow-x: auto;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      overflow-x: auto;
     }
-    .stat-chip {
-      display: flex; align-items: center; gap: 6px; white-space: nowrap;
-      font-size: 11px; color: var(--slate2); font-family: 'DM Mono', monospace;
-    }
-    .stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-    /* Board */
-    .board {
-      display: flex; gap: 10px; padding: 14px 14px 20px;
-      overflow-x: auto; flex: 1; align-items: flex-start;
+    .filter-label,
+    .stat-chip,
+    .progress-label {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      white-space: nowrap;
     }
+
+    .filter-label { color: #9ca3af; }
+
+    .filter-chip {
+      padding: 4px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .filter-chip.active {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .stats-bar { gap: 20px; }
+
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--slate2);
+    }
+
+    .stat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .filter-spacer {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .progress-track,
+    .col-progress-bar {
+      height: 5px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-track { width: 120px; }
+
+    .progress-fill,
+    .col-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-fill { background: var(--green2); }
+
+    .progress-label { color: #6b7280; font-size: 10px; }
+
+    .board {
+      display: flex;
+      gap: 10px;
+      padding: 14px 14px 20px;
+      overflow-x: auto;
+      flex: 1;
+      align-items: flex-start;
+    }
+
     .board::-webkit-scrollbar { height: 6px; }
     .board::-webkit-scrollbar-track { background: transparent; }
     .board::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-    /* Column */
     .col {
-      flex-shrink: 0; width: 232px; display: flex; flex-direction: column;
-      border-radius: 14px; overflow: hidden;
+      flex-shrink: 0;
+      width: 232px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 14px;
+      overflow: hidden;
       box-shadow: var(--shadow-md);
+      background: #fff;
     }
-    .col-today { box-shadow: 0 0 0 2.5px var(--amber), 0 4px 20px rgba(200,132,26,0.18); }
+
+    .col-today {
+      box-shadow: 0 0 0 2.5px var(--amber), 0 4px 20px rgba(200,132,26,0.18);
+    }
 
     .col-header {
-      padding: 11px 13px 10px; flex-shrink: 0;
+      padding: 11px 13px 10px;
+      flex-shrink: 0;
     }
-    .col-day-row { display: flex; align-items: center; justify-content: space-between; }
-    .col-day-name { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; }
-    .col-day-full { font-size: 10px; opacity: 0.7; margin-top: 1px; font-family: 'Lato', sans-serif; }
+
+    .col-day-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .col-day-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .col-day-full {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-top: 1px;
+    }
+
     .col-tag {
-      font-size: 9px; font-family: 'DM Mono', monospace;
-      padding: 3px 7px; border-radius: 10px; margin-top: 6px;
-      display: inline-block; font-weight: 500;
+      font-size: 9px;
+      font-family: 'DM Mono', monospace;
+      padding: 3px 7px;
+      border-radius: 10px;
+      margin-top: 6px;
+      display: inline-block;
+      font-weight: 500;
     }
+
     .today-pill {
-      font-size: 9px; background: var(--amber); color: #fff;
-      padding: 2px 7px; border-radius: 10px; font-family: 'DM Mono', monospace; font-weight: 500;
+      font-size: 9px;
+      background: var(--amber);
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      white-space: nowrap;
     }
 
-    /* Progress inside column header */
     .col-progress { margin-top: 8px; }
-    .col-progress-bar { height: 3px; border-radius: 2px; background: rgba(0,0,0,0.12); overflow: hidden; }
-    .col-progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
-    .col-progress-label { font-size: 9px; color: rgba(0,0,0,0.5); margin-top: 3px; font-family: 'DM Mono', monospace; }
+    .col-progress-bar { height: 3px; background: rgba(0,0,0,0.12); }
+    .col-progress-label {
+      font-size: 9px;
+      margin-top: 3px;
+      font-family: 'DM Mono', monospace;
+      color: rgba(255,255,255,0.65);
+    }
 
-    /* Cards container */
     .col-cards {
-      flex: 1; overflow-y: auto; padding: 8px 8px 10px;
-      background: var(--cream); display: flex; flex-direction: column; gap: 6px;
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 8px 10px;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       max-height: calc(100vh - 180px);
     }
+
     .col-cards::-webkit-scrollbar { width: 3px; }
     .col-cards::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    /* Meal card */
     .card {
-      background: var(--card); border-radius: 10px;
+      background: var(--card);
+      border-radius: 10px;
       border: 1px solid var(--border);
-      overflow: hidden; cursor: pointer;
+      overflow: hidden;
       transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
       box-shadow: var(--shadow);
     }
-    .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-    .card.done { opacity: 0.6; background: var(--done-bg); border-color: #bbf7d0; }
+
+    .card.clickable { cursor: pointer; }
+    .card.clickable:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+    .card.done {
+      opacity: 0.65;
+      background: var(--done-bg);
+      border-color: #bbf7d0;
+    }
+
     .card.treino-card {
       background: linear-gradient(135deg, #c2410c, #ea580c);
-      border: none; cursor: default;
+      border: none;
     }
-    .card.treino-card:hover { transform: none; box-shadow: var(--shadow); }
 
-    .card-top { padding: 8px 10px 6px; display: flex; align-items: flex-start; gap: 8px; }
-    .card-emoji { font-size: 18px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+    .card-top {
+      padding: 8px 10px 6px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .card-emoji {
+      font-size: 18px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
     .card-meta { flex: 1; min-width: 0; }
-    .card-title { font-size: 11px; font-weight: 700; color: var(--slate); font-family: 'Lato', sans-serif; }
-    .card-time { font-size: 9px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 1px; }
-    .card-check {
-      width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
-      border: 2px solid var(--border); background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s; margin-top: 1px;
+
+    .card-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--slate);
     }
-    .card-check.checked { background: var(--green2); border-color: var(--green2); }
 
-    .card-body { padding: 0 10px 8px; font-size: 11px; color: var(--slate2); line-height: 1.5; }
-    .card-body.done-txt { color: var(--done-txt); }
+    .card.done .card-title,
+    .card.done .card-body { color: var(--done-txt); }
 
-    /* Treino card specifics */
-    .treino-inner { padding: 9px 10px; display: flex; align-items: center; gap: 8px; }
-    .treino-text { font-size: 10px; color: #fff; font-family: 'DM Mono', monospace; line-height: 1.4; }
+    .card-time {
+      font-size: 9px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      margin-top: 1px;
+    }
+
+    .card-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid var(--border);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      margin-top: 1px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-check.checked {
+      background: var(--green2);
+      border-color: var(--green2);
+      color: #fff;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .card-body {
+      padding: 0 10px 8px;
+      font-size: 11px;
+      color: var(--slate2);
+      line-height: 1.5;
+    }
+
+    .card-body.collapsed {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-expanded {
+      padding: 6px 10px 8px;
+      border-top: 1px solid #f0ece6;
+      font-size: 10px;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .card-actions {
+      padding: 4px 10px 7px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mini-btn,
+    .status-btn {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .mini-btn {
+      font-size: 9px;
+      color: #9ca3af;
+      padding: 0;
+    }
+
+    .status-btn {
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      color: #6b7280;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .status-btn.done {
+      border-color: #86efac;
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .treino-inner {
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .treino-badge { font-size: 14px; }
 
-    /* Expanded card detail */
-    .card-expanded {
-      padding: 6px 10px 8px; border-top: 1px solid #f0ece6;
-      font-size: 10px; color: var(--muted); font-style: italic; line-height: 1.5;
+    .treino-text {
+      font-size: 10px;
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      line-height: 1.4;
     }
 
-    /* Filter bar */
-    .filter-bar {
-      background: #fff; border-bottom: 1px solid var(--border);
-      padding: 6px 24px; display: flex; align-items: center; gap: 8px;
-      flex-shrink: 0; overflow-x: auto;
-    }
-    .filter-chip {
-      padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border);
-      background: #fff; cursor: pointer; font-size: 11px; font-family: 'DM Mono', monospace;
-      color: var(--muted); white-space: nowrap; transition: all 0.15s;
-    }
-    .filter-chip.active { background: var(--green); color: #fff; border-color: var(--green); }
-
-    /* Toast */
     .toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: var(--slate); color: #fff; padding: 10px 20px; border-radius: 20px;
-      font-size: 12px; font-family: 'DM Mono', monospace;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 100;
-      opacity: 0; transition: opacity 0.3s;
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--slate);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s;
       pointer-events: none;
     }
+
     .toast.show { opacity: 1; }
-  `}</style>
-);
 
-/* ─── Data ──────────────────────────────────────────────────────────────────── */
-const DAYS = [
-  {
-    id: 0, key: "seg", short: "SEG", full: "Segunda-feira",
-    tag: "🏋️ Treino noturno", tagColor: "#166534", tagBg: "#dcfce7", headerBg: "#2d6a4f", headerTxt: "#fff",
-    cards: [
-      { id:"s1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Vitamina verde (aveia+espinafre+banana+chia) · Pão integral com abacate e limão" },
-      { id:"s2", emoji:"🥗", title:"Almoço ⭐ Principal", time:"12h – 13h", text:"Arroz integral + lentilha com açafrão · Salmão grelhado no azeite · Salada de rúcula e tomate-cereja" },
-      { id:"s3", emoji:"🏋️", title:"Pré-Treino", time:"15h30 – 16h", text:"☕ Café especial · 1 banana + pasta de amêndoa · Não coma coisa pesada — treino em 2h" },
-      { treino: true, id:"s4", text:"🏋️  MUSCULAÇÃO  ·  ~18h  ·  150–200ml água a cada 15–20min" },
-      { id:"s5", emoji:"🥤", title:"Pós-Treino", time:"até 19h30", text:"Shake: proteína de ervilha + leite vegetal + banana · OU iogurte grego + mel + aveia · Janela anabólica!" },
-      { id:"s6", emoji:"🌙", title:"Jantar", time:"~20h", text:"Salmão + batata-doce + brócolis no vapor · OU omelete 3 ovos + espinafre + pão de centeio" },
-    ],
-  },
-  {
-    id: 1, key: "ter", short: "TER", full: "Terça-feira",
-    tag: "😴 Descanso", tagColor: "#6b7280", tagBg: "#f3f4f6", headerBg: "#4a5568", headerTxt: "#fff",
-    cards: [
-      { id:"t1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Iogurte natural com mirtilos + granola sem açúcar" },
-      { id:"t2", emoji:"🥗", title:"Almoço", time:"12h – 13h", text:"Quinoa + grão-de-bico ao molho de tomate e cúrcuma · Frango orgânico assado · Brócolis no vapor" },
-      { id:"t3", emoji:"🍎", title:"Lanche", time:"15h – 16h", text:"Nozes + amêndoas · Manga + abacaxi em cubos" },
-      { id:"t4", emoji:"🌙", title:"Jantar", time:"19h – 20h", text:"Bowl de legumes assados (abobrinha, berinjela, pimentão) · Omelete com espinafre e cúrcuma · Chá de camomila" },
-    ],
-  },
-  {
-    id: 2, key: "qua", short: "QUA", full: "Quarta-feira",
-    tag: "🏋️ Treino noturno", tagColor: "#166534", tagBg: "#dcfce7", headerBg: "#2d6a4f", headerTxt: "#fff",
-    cards: [
-      { id:"q1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Aveia cozida com canela + banana + linhaça dourada" },
-      { id:"q2", emoji:"🥗", title:"Almoço ⭐ Principal", time:"12h – 13h", text:"Arroz integral + feijão preto · Sardinha assada com azeite e limão · Salada de couve, cenoura e beterraba" },
-      { id:"q3", emoji:"🏋️", title:"Pré-Treino", time:"15h30 – 16h", text:"☕ Café especial · Pão integral + 2 ovos mexidos · Digestão tranquila até as 18h" },
-      { treino: true, id:"q4", text:"🏋️  MUSCULAÇÃO  ·  ~18h  ·  150–200ml água a cada 15–20min" },
-      { id:"q5", emoji:"🥤", title:"Pós-Treino", time:"até 19h30", text:"Marmita: arroz branco (aqui branco é OK!) + frango grelhado · OU shake proteico + banana" },
-      { id:"q6", emoji:"🌙", title:"Jantar", time:"~20h", text:"Bowl grão-de-bico + abacate + rúcula + tomate · OU frango + quinoa + salada de folhas verdes" },
-    ],
-  },
-  {
-    id: 3, key: "qui", short: "QUI", full: "Quinta-feira",
-    tag: "🍷 Noite de vinho", tagColor: "#5b21b6", tagBg: "#ede9fe", headerBg: "#4c1d95", headerTxt: "#fff",
-    cards: [
-      { id:"qi1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Ovos mexidos com espinafre e açafrão · Pão integral com abacate" },
-      { id:"qi2", emoji:"🥗", title:"Almoço", time:"12h – 13h", text:"Macarrão integral + molho de tomate caseiro com manjericão · Frango desfiado com cúrcuma · Salada de folhas" },
-      { id:"qi3", emoji:"🍎", title:"Lanche", time:"15h – 16h", text:"☕ Café especial · Papaia + framboesa + banana" },
-      { id:"qi4", emoji:"🍷", title:"Jantar · Vinho", time:"19h – 20h", text:"Tábua: queijo de cabra + parmesão maturado · Azeitonas + amêndoas tostadas + uvas frescas · 1–2 taças vinho tinto seco" },
-    ],
-  },
-  {
-    id: 4, key: "sex", short: "SEX", full: "Sexta-feira",
-    tag: "😴 Descanso", tagColor: "#6b7280", tagBg: "#f3f4f6", headerBg: "#4a5568", headerTxt: "#fff",
-    cards: [
-      { id:"sx1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Panqueca de aveia com banana · Morango + mirtilo frescos" },
-      { id:"sx2", emoji:"🥗", title:"Almoço", time:"12h – 13h", text:"Arroz negro + ervilhas frescas · Salmão ou atum grelhado · Salada de agrião com laranja e nozes" },
-      { id:"sx3", emoji:"🍎", title:"Lanche", time:"15h – 16h", text:"Castanha-do-pará (2 un) + amêndoas · Abacaxi + kiwi fatiados" },
-      { id:"sx4", emoji:"🌙", title:"Jantar", time:"19h – 20h", text:"Wrap integral: frango + abacate + rúcula + mostarda Dijon · Salada verde simples" },
-    ],
-  },
-  {
-    id: 5, key: "sab", short: "SAB", full: "Sábado",
-    tag: "🏋️ Treino manhã + 🍷 Vinho", tagColor: "#1d4ed8", tagBg: "#dbeafe", headerBg: "#1e3a8a", headerTxt: "#fff",
-    cards: [
-      { id:"sb1", emoji:"🍌", title:"Pré-Treino Leve", time:"7h30 – 8h", text:"☕ Café especial + 1 banana · OU 1 iogurte natural + 1 col. mel · Não treinar em jejum!" },
-      { treino: true, id:"sb2", text:"🏋️  MUSCULAÇÃO  ·  8h30 – 10h  ·  150–200ml água a cada 15–20min" },
-      { id:"sb3", emoji:"🥤", title:"Pós-Treino = Café", time:"até 10h30", text:"Bowl proteico: iogurte grego + açaí + granola + mirtilos + chia · OU omelete + tapioca com queijo de cabra" },
-      { id:"sb4", emoji:"🥗", title:"Almoço", time:"11h30 – 12h30", text:"Feijoada leve + couve refogada · Arroz integral + laranja · Salada de pepino com azeite e ervas" },
-      { id:"sb5", emoji:"🍎", title:"Lanche", time:"15h", text:"Iogurte natural + mel (1 col.) + amêndoas · Mamão formosa + maracujá" },
-      { id:"sb6", emoji:"🍷", title:"Jantar · Vinho", time:"19h – 20h", text:"Tábua: brie/camembert + queijo de cabra · Uva + figo + castanhas e nozes · 1–2 taças vinho tinto seco" },
-    ],
-  },
-  {
-    id: 6, key: "dom", short: "DOM", full: "Domingo",
-    tag: "🏋️ Treino (se não treinou sáb.) + 🥣 Prep da semana!", tagColor: "#0369a1", tagBg: "#e0f2fe", headerBg: "#075985", headerTxt: "#fff",
-    cards: [
-      { id:"d1", emoji:"🍌", title:"Pré-Treino Leve", time:"7h30 – 8h", text:"☕ Café especial + 1 banana · OU 3–4 tâmaras + 5 nozes" },
-      { treino: true, id:"d2", text:"🏋️  MUSCULAÇÃO  ·  8h30 – 10h  ·  150–200ml água a cada 15–20min · (só se não treinou sábado)" },
-      { id:"d3", emoji:"🥤", title:"Pós-Treino = Café", time:"até 10h30", text:"Shake: proteína de ervilha + leite vegetal + banana + chia + cacau · OU panqueca proteica de aveia" },
-      { id:"d4", emoji:"🥗", title:"Almoço", time:"11h30 – 12h30", text:"Arroz integral + lentilha · Peixe branco assado com ervas (tilápia ou pescada) · Legumes no vapor" },
-      { id:"d5", emoji:"🍎", title:"Lanche", time:"15h", text:"Maçã assada com canela e nozes · Chá de camomila com canela" },
-      { id:"d6", emoji:"🌙", title:"Jantar + Prep! 🥣", time:"19h – 20h", text:"Pizza integral: tomate + rúcula + azeite · Salada verde · Aproveite para deixar a overnight oats pronta para segunda!" },
-    ],
-  },
-];
-
-/* ─── Component ─────────────────────────────────────────────────────────────── */
-export default function KanbanDieta() {
-  const todayIdx = new Date().getDay(); // 0=sun,1=mon...
-  const dayMap = { 1:0, 2:1, 3:2, 4:3, 5:4, 6:5, 0:6 };
-  const todayColIdx = dayMap[todayIdx] ?? 0;
-
-  const [done, setDone] = useState({});
-  const [expanded, setExpanded] = useState({});
-  const [filter, setFilter] = useState("all");
-  const [toast, setToast] = useState({ show: false, msg: "" });
-
-  const toggle = (id, dayKey) => {
-    setDone(prev => {
-      const next = { ...prev, [id]: !prev[id] };
-      const dayCards = DAYS.find(d => d.key === dayKey).cards.filter(c => !c.treino);
-      const allDone = dayCards.every(c => next[c.id]);
-      if (!prev[id]) showToast(allDone ? "🎉 Dia completo! Arrasou!" : "✓ Refeição registrada!");
-      return next;
-    });
-  };
-
-  const toggleExpand = (id) => setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
-
-  const showToast = (msg) => {
-    setToast({ show: true, msg });
-    setTimeout(() => setToast({ show: false, msg: "" }), 2200);
-  };
-
-  const filteredDays = DAYS.filter(d => {
-    if (filter === "all") return true;
-    if (filter === "treino") return d.tag.includes("Treino");
-    if (filter === "vinho") return d.tag.includes("Vinho");
-    if (filter === "descanso") return d.tag.includes("Descanso");
-    return true;
-  });
-
-  const totalMeals = DAYS.flatMap(d => d.cards.filter(c => !c.treino)).length;
-  const doneMeals = Object.values(done).filter(Boolean).length;
-  const todayDone = DAYS[todayColIdx]?.cards.filter(c => !c.treino && done[c.id]).length ?? 0;
-  const todayTotal = DAYS[todayColIdx]?.cards.filter(c => !c.treino).length ?? 0;
-
-  return (
-    <>
-      <FontLink />
-      <div className="board-wrap">
-
-        {/* Header */}
-        <div className="header">
-          <div className="header-left">
-            <span style={{ fontSize: 26 }}>🌿</span>
-            <div>
-              <div className="header-title">Kanban da Dieta</div>
-              <div className="header-sub">plano anti-inflamatório · musculação 3×/semana</div>
-            </div>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
-            <div className="week-badge">
-              {doneMeals}/{totalMeals} refeições ✓
-            </div>
-            <div style={{ fontSize: 10, color: "#a7f3c0", fontFamily: "'DM Mono', monospace" }}>
-              Hoje: {todayDone}/{todayTotal} refeições
-            </div>
-          </div>
-        </div>
-
-        {/* Filter bar */}
-        <div className="filter-bar">
-          <span style={{ fontSize: 11, color: "#9ca3af", fontFamily: "'DM Mono', monospace", marginRight: 4, whiteSpace: "nowrap" }}>filtrar:</span>
-          {[
-            { key: "all",      label: "Todos os dias" },
-            { key: "treino",   label: "🏋️ Dias de treino" },
-            { key: "vinho",    label: "🍷 Noite de vinho" },
-            { key: "descanso", label: "😴 Descanso" },
-          ].map(f => (
-            <button key={f.key} className={`filter-chip ${filter === f.key ? "active" : ""}`}
-              onClick={() => setFilter(f.key)}>{f.label}</button>
-          ))}
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-            <div style={{ width: 120, height: 5, background: "#e5e7eb", borderRadius: 3, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${Math.round((doneMeals/totalMeals)*100)}%`, background: "var(--green2)", borderRadius: 3, transition: "width 0.4s" }} />
-            </div>
-            <span style={{ fontSize: 10, color: "#6b7280", fontFamily: "'DM Mono', monospace" }}>
-              {Math.round((doneMeals/totalMeals)*100)}% semana
-            </span>
-          </div>
-        </div>
-
-        {/* Stats bar */}
-        <div className="stats-bar">
-          {[
-            { dot: "#2d6a4f", label: "Treino noturno: Seg + Qua" },
-            { dot: "#1e40af", label: "Treino manhã: Sáb ou Dom" },
-            { dot: "#5b21b6", label: "Vinho: Qui + Sáb" },
-            { dot: "#ea580c", label: "Faixa laranja = momento do treino" },
-            { dot: "#52b788", label: "Card verde = refeição registrada" },
-          ].map((s, i) => (
-            <div key={i} className="stat-chip">
-              <div className="stat-dot" style={{ background: s.dot }} />
-              {s.label}
-            </div>
-          ))}
-        </div>
-
-        {/* Board */}
-        <div className="board">
-          {filteredDays.map((day) => {
-            const isToday = day.id === todayColIdx;
-            const dayCards = day.cards.filter(c => !c.treino);
-            const doneCnt = dayCards.filter(c => done[c.id]).length;
-            const pct = dayCards.length > 0 ? Math.round((doneCnt / dayCards.length) * 100) : 0;
-
-            return (
-              <div key={day.key} className={`col ${isToday ? "col-today" : ""}`}>
-                {/* Column header */}
-                <div className="col-header" style={{ background: day.headerBg }}>
-                  <div className="col-day-row">
-                    <div>
-                      <div className="col-day-name" style={{ color: day.headerTxt }}>{day.short}</div>
-                      <div className="col-day-full" style={{ color: day.headerTxt }}>{day.full}</div>
-                    </div>
-                    {isToday && <div className="today-pill">HOJE</div>}
-                  </div>
-                  <div className="col-tag" style={{ background: day.tagBg, color: day.tagColor }}>
-                    {day.tag}
-                  </div>
-                  <div className="col-progress">
-                    <div className="col-progress-bar">
-                      <div className="col-progress-fill" style={{ width: `${pct}%`, background: pct === 100 ? "#22c55e" : "rgba(255,255,255,0.6)" }} />
-                    </div>
-                    <div className="col-progress-label" style={{ color: "rgba(255,255,255,0.6)" }}>
-                      {doneCnt}/{dayCards.length} refeições {pct === 100 ? "🎉" : ""}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Cards */}
-                <div className="col-cards">
-                  {day.cards.map((card) => {
-                    if (card.treino) {
-                      return (
-                        <div key={card.id} className="card treino-card">
-                          <div className="treino-inner">
-                            <div className="treino-badge">💪</div>
-                            <div className="treino-text">{card.text}</div>
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    const isDone = !!done[card.id];
-                    const isExpanded = !!expanded[card.id];
-
-                    return (
-                      <div key={card.id} className={`card ${isDone ? "done" : ""}`}>
-                        <div className="card-top" onClick={() => toggleExpand(card.id)}>
-                          <div className="card-emoji">{card.emoji}</div>
-                          <div className="card-meta">
-                            <div className="card-title" style={{ color: isDone ? "var(--done-txt)" : "var(--slate)" }}>
-                              {card.title}
-                            </div>
-                            <div className="card-time">{card.time}</div>
-                          </div>
-                          <div className={`card-check ${isDone ? "checked" : ""}`}
-                            onClick={(e) => { e.stopPropagation(); toggle(card.id, day.key); }}>
-                            {isDone && <span style={{ color: "#fff", fontSize: 10, fontWeight: "bold" }}>✓</span>}
-                          </div>
-                        </div>
-
-                        <div className={`card-body ${isDone ? "done-txt" : ""}`}
-                          style={{ display: isExpanded ? "block" : "-webkit-box", WebkitLineClamp: isExpanded ? "unset" : 2,
-                            WebkitBoxOrient: "vertical", overflow: isExpanded ? "visible" : "hidden" }}>
-                          {card.text}
-                        </div>
-
-                        {isExpanded && card.note && (
-                          <div className="card-expanded">{card.note}</div>
-                        )}
-
-                        <div style={{ padding: "4px 10px 7px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <button onClick={() => toggleExpand(card.id)}
-                            style={{ fontSize: 9, color: "#9ca3af", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Mono', monospace", padding: 0 }}>
-                            {isExpanded ? "▲ menos" : "▼ mais"}
-                          </button>
-                          <button onClick={() => toggle(card.id, day.key)}
-                            style={{ fontSize: 9, padding: "3px 8px", borderRadius: 8, border: "1px solid",
-                              borderColor: isDone ? "#86efac" : "#d1d5db",
-                              background: isDone ? "#dcfce7" : "#f9fafb",
-                              color: isDone ? "#15803d" : "#6b7280",
-                              cursor: "pointer", fontFamily: "'DM Mono', monospace", fontWeight: "500",
-                              transition: "all 0.15s" }}>
-                            {isDone ? "✓ feito" : "registrar"}
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+    @media (max-width: 768px) {
+      .header, .filter-bar, .stats-bar { padding-left: 14px; padding-right: 14px; }
+      .col { width: 86vw; max-width: 280px; }
+      .col-cards { max-height: none; }
+      .filter-spacer { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="board-wrap">
+    <div class="header">
+      <div class="header-left">
+        <span style="font-size: 26px;">🌿</span>
+        <div>
+          <div class="header-title">Kanban da Dieta</div>
+          <div class="header-sub">plano anti-inflamatório · musculação 3×/semana</div>
         </div>
       </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+        <div class="week-badge" id="weekBadge">0/0 refeições ✓</div>
+        <div style="font-size:10px; color:#a7f3c0; font-family:'DM Mono', monospace;" id="todayBadge">Hoje: 0/0 refeições</div>
+      </div>
+    </div>
 
-      {/* Toast */}
-      <div className={`toast ${toast.show ? "show" : ""}`}>{toast.msg}</div>
-    </>
-  );
-}
+    <div class="filter-bar">
+      <span class="filter-label">filtrar:</span>
+      <button class="filter-chip active" data-filter="all">Todos os dias</button>
+      <button class="filter-chip" data-filter="treino">🏋️ Dias de treino</button>
+      <button class="filter-chip" data-filter="vinho">🍷 Noite de vinho</button>
+      <button class="filter-chip" data-filter="descanso">😴 Descanso</button>
+      <div class="filter-spacer">
+        <div class="progress-track"><div class="progress-fill" id="weekProgress"></div></div>
+        <span class="progress-label" id="weekPercent">0% semana</span>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-chip"><div class="stat-dot" style="background:#2d6a4f"></div>Treino noturno: Seg + Qua</div>
+      <div class="stat-chip"><div class="stat-dot" style="background:#1e40af"></div>Treino manhã: Sáb ou Dom</div>
+      <div class="stat-chip"><div class="stat-dot" style="background:#5b21b6"></div>Vinho: Qui + Sáb</div>
+      <div class="stat-chip"><div class="stat-dot" style="background:#ea580c"></div>Faixa laranja = momento do treino</div>
+      <div class="stat-chip"><div class="stat-dot" style="background:#52b788"></div>Card verde = refeição registrada</div>
+    </div>
+
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const DAYS = [
+      {
+        id: 0, key: "seg", short: "SEG", full: "Segunda-feira",
+        tag: "🏋️ Treino noturno", tagColor: "#166534", tagBg: "#dcfce7", headerBg: "#2d6a4f", headerTxt: "#fff",
+        cards: [
+          { id:"s1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Vitamina verde (aveia+espinafre+banana+chia) · Pão integral com abacate e limão" },
+          { id:"s2", emoji:"🥗", title:"Almoço ⭐ Principal", time:"12h – 13h", text:"Arroz integral + lentilha com açafrão · Salmão grelhado no azeite · Salada de rúcula e tomate-cereja" },
+          { id:"s3", emoji:"🏋️", title:"Pré-Treino", time:"15h30 – 16h", text:"☕ Café especial · 1 banana + pasta de amêndoa · Não coma coisa pesada — treino em 2h" },
+          { treino: true, id:"s4", text:"🏋️ MUSCULAÇÃO · ~18h · 150–200ml água a cada 15–20min" },
+          { id:"s5", emoji:"🥤", title:"Pós-Treino", time:"até 19h30", text:"Shake: proteína de ervilha + leite vegetal + banana · OU iogurte grego + mel + aveia · Janela anabólica!" },
+          { id:"s6", emoji:"🌙", title:"Jantar", time:"~20h", text:"Salmão + batata-doce + brócolis no vapor · OU omelete 3 ovos + espinafre + pão de centeio" }
+        ]
+      },
+      {
+        id: 1, key: "ter", short: "TER", full: "Terça-feira",
+        tag: "😴 Descanso", tagColor: "#6b7280", tagBg: "#f3f4f6", headerBg: "#4a5568", headerTxt: "#fff",
+        cards: [
+          { id:"t1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Iogurte natural com mirtilos + granola sem açúcar" },
+          { id:"t2", emoji:"🥗", title:"Almoço", time:"12h – 13h", text:"Quinoa + grão-de-bico ao molho de tomate e cúrcuma · Frango orgânico assado · Brócolis no vapor" },
+          { id:"t3", emoji:"🍎", title:"Lanche", time:"15h – 16h", text:"Nozes + amêndoas · Manga + abacaxi em cubos" },
+          { id:"t4", emoji:"🌙", title:"Jantar", time:"19h – 20h", text:"Bowl de legumes assados (abobrinha, berinjela, pimentão) · Omelete com espinafre e cúrcuma · Chá de camomila" }
+        ]
+      },
+      {
+        id: 2, key: "qua", short: "QUA", full: "Quarta-feira",
+        tag: "🏋️ Treino noturno", tagColor: "#166534", tagBg: "#dcfce7", headerBg: "#2d6a4f", headerTxt: "#fff",
+        cards: [
+          { id:"q1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Aveia cozida com canela + banana + linhaça dourada" },
+          { id:"q2", emoji:"🥗", title:"Almoço ⭐ Principal", time:"12h – 13h", text:"Arroz integral + feijão preto · Sardinha assada com azeite e limão · Salada de couve, cenoura e beterraba" },
+          { id:"q3", emoji:"🏋️", title:"Pré-Treino", time:"15h30 – 16h", text:"☕ Café especial · Pão integral + 2 ovos mexidos · Digestão tranquila até as 18h" },
+          { treino: true, id:"q4", text:"🏋️ MUSCULAÇÃO · ~18h · 150–200ml água a cada 15–20min" },
+          { id:"q5", emoji:"🥤", title:"Pós-Treino", time:"até 19h30", text:"Marmita: arroz branco (aqui branco é OK!) + frango grelhado · OU shake proteico + banana" },
+          { id:"q6", emoji:"🌙", title:"Jantar", time:"~20h", text:"Bowl grão-de-bico + abacate + rúcula + tomate · OU frango + quinoa + salada de folhas verdes" }
+        ]
+      },
+      {
+        id: 3, key: "qui", short: "QUI", full: "Quinta-feira",
+        tag: "🍷 Noite de vinho", tagColor: "#5b21b6", tagBg: "#ede9fe", headerBg: "#4c1d95", headerTxt: "#fff",
+        cards: [
+          { id:"qi1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Ovos mexidos com espinafre e açafrão · Pão integral com abacate" },
+          { id:"qi2", emoji:"🥗", title:"Almoço", time:"12h – 13h", text:"Macarrão integral + molho de tomate caseiro com manjericão · Frango desfiado com cúrcuma · Salada de folhas" },
+          { id:"qi3", emoji:"🍎", title:"Lanche", time:"15h – 16h", text:"☕ Café especial · Papaia + framboesa + banana" },
+          { id:"qi4", emoji:"🍷", title:"Jantar · Vinho", time:"19h – 20h", text:"Tábua: queijo de cabra + parmesão maturado · Azeitonas + amêndoas tostadas + uvas frescas · 1–2 taças vinho tinto seco" }
+        ]
+      },
+      {
+        id: 4, key: "sex", short: "SEX", full: "Sexta-feira",
+        tag: "😴 Descanso", tagColor: "#6b7280", tagBg: "#f3f4f6", headerBg: "#4a5568", headerTxt: "#fff",
+        cards: [
+          { id:"sx1", emoji:"☀️", title:"Café da Manhã", time:"7h – 8h", text:"☕ Café especial · Panqueca de aveia com banana · Morango + mirtilo frescos" },
+          { id:"sx2", emoji:"🥗", title:"Almoço", time:"12h – 13h", text:"Arroz negro + ervilhas frescas · Salmão ou atum grelhado · Salada de agrião com laranja e nozes" },
+          { id:"sx3", emoji:"🍎", title:"Lanche", time:"15h – 16h", text:"Castanha-do-pará (2 un) + amêndoas · Abacaxi + kiwi fatiados" },
+          { id:"sx4", emoji:"🌙", title:"Jantar", time:"19h – 20h", text:"Wrap integral: frango + abacate + rúcula + mostarda Dijon · Salada verde simples" }
+        ]
+      },
+      {
+        id: 5, key: "sab", short: "SAB", full: "Sábado",
+        tag: "🏋️ Treino manhã + 🍷 Vinho", tagColor: "#1d4ed8", tagBg: "#dbeafe", headerBg: "#1e3a8a", headerTxt: "#fff",
+        cards: [
+          { id:"sb1", emoji:"🍌", title:"Pré-Treino Leve", time:"7h30 – 8h", text:"☕ Café especial + 1 banana · OU 1 iogurte natural + 1 col. mel · Não treinar em jejum!" },
+          { treino: true, id:"sb2", text:"🏋️ MUSCULAÇÃO · 8h30 – 10h · 150–200ml água a cada 15–20min" },
+          { id:"sb3", emoji:"🥤", title:"Pós-Treino = Café", time:"até 10h30", text:"Bowl proteico: iogurte grego + açaí + granola + mirtilos + chia · OU omelete + tapioca com queijo de cabra" },
+          { id:"sb4", emoji:"🥗", title:"Almoço", time:"11h30 – 12h30", text:"Feijoada leve + couve refogada · Arroz integral + laranja · Salada de pepino com azeite e ervas" },
+          { id:"sb5", emoji:"🍎", title:"Lanche", time:"15h", text:"Iogurte natural + mel (1 col.) + amêndoas · Mamão formosa + maracujá" },
+          { id:"sb6", emoji:"🍷", title:"Jantar · Vinho", time:"19h – 20h", text:"Tábua: brie/camembert + queijo de cabra · Uva + figo + castanhas e nozes · 1–2 taças vinho tinto seco" }
+        ]
+      },
+      {
+        id: 6, key: "dom", short: "DOM", full: "Domingo",
+        tag: "🏋️ Treino (se não treinou sáb.) + 🥣 Prep da semana!", tagColor: "#0369a1", tagBg: "#e0f2fe", headerBg: "#075985", headerTxt: "#fff",
+        cards: [
+          { id:"d1", emoji:"🍌", title:"Pré-Treino Leve", time:"7h30 – 8h", text:"☕ Café especial + 1 banana · OU 3–4 tâmaras + 5 nozes" },
+          { treino: true, id:"d2", text:"🏋️ MUSCULAÇÃO · 8h30 – 10h · 150–200ml água a cada 15–20min · (só se não treinou sábado)" },
+          { id:"d3", emoji:"🥤", title:"Pós-Treino = Café", time:"até 10h30", text:"Shake: proteína de ervilha + leite vegetal + banana + chia + cacau · OU panqueca proteica de aveia" },
+          { id:"d4", emoji:"🥗", title:"Almoço", time:"11h30 – 12h30", text:"Arroz integral + lentilha · Peixe branco assado com ervas (tilápia ou pescada) · Legumes no vapor" },
+          { id:"d5", emoji:"🍎", title:"Lanche", time:"15h", text:"Maçã assada com canela e nozes · Chá de camomila com canela" },
+          { id:"d6", emoji:"🌙", title:"Jantar + Prep! 🥣", time:"19h – 20h", text:"Pizza integral: tomate + rúcula + azeite · Salada verde · Aproveite para deixar a overnight oats pronta para segunda!" }
+        ]
+      }
+    ];
+
+    const STORAGE_DONE = 'kanban_dieta_done_html';
+    const STORAGE_EXPANDED = 'kanban_dieta_expanded_html';
+    const STORAGE_FILTER = 'kanban_dieta_filter_html';
+
+    let done = JSON.parse(localStorage.getItem(STORAGE_DONE) || '{}');
+    let expanded = JSON.parse(localStorage.getItem(STORAGE_EXPANDED) || '{}');
+    let filter = localStorage.getItem(STORAGE_FILTER) || 'all';
+
+    const board = document.getElementById('board');
+    const weekBadge = document.getElementById('weekBadge');
+    const todayBadge = document.getElementById('todayBadge');
+    const weekProgress = document.getElementById('weekProgress');
+    const weekPercent = document.getElementById('weekPercent');
+    const toast = document.getElementById('toast');
+    const filterButtons = document.querySelectorAll('.filter-chip');
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function getTodayColumnIndex() {
+      const todayIdx = new Date().getDay();
+      const dayMap = { 1:0, 2:1, 3:2, 4:3, 5:4, 6:5, 0:6 };
+      return dayMap[todayIdx] ?? 0;
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_DONE, JSON.stringify(done));
+      localStorage.setItem(STORAGE_EXPANDED, JSON.stringify(expanded));
+      localStorage.setItem(STORAGE_FILTER, filter);
+    }
+
+    function toggleDone(cardId, dayKey) {
+      const nextValue = !done[cardId];
+      done[cardId] = nextValue;
+      const dayCards = DAYS.find(d => d.key === dayKey).cards.filter(c => !c.treino);
+      const allDone = dayCards.every(c => done[c.id]);
+      saveState();
+      render();
+      if (nextValue) {
+        showToast(allDone ? '🎉 Dia completo! Arrasou!' : '✓ Refeição registrada!');
+      }
+    }
+
+    function toggleExpand(cardId) {
+      expanded[cardId] = !expanded[cardId];
+      saveState();
+      render();
+    }
+
+    function matchesFilter(day) {
+      if (filter === 'all') return true;
+      if (filter === 'treino') return day.tag.includes('Treino');
+      if (filter === 'vinho') return day.tag.includes('Vinho');
+      if (filter === 'descanso') return day.tag.includes('Descanso');
+      return true;
+    }
+
+    function renderHeaderStats() {
+      const todayColIdx = getTodayColumnIndex();
+      const totalMeals = DAYS.flatMap(d => d.cards.filter(c => !c.treino)).length;
+      const doneMeals = Object.values(done).filter(Boolean).length;
+      const todayMeals = DAYS[todayColIdx].cards.filter(c => !c.treino);
+      const todayDoneMeals = todayMeals.filter(c => done[c.id]).length;
+      const pct = totalMeals ? Math.round((doneMeals / totalMeals) * 100) : 0;
+
+      weekBadge.textContent = `${doneMeals}/${totalMeals} refeições ✓`;
+      todayBadge.textContent = `Hoje: ${todayDoneMeals}/${todayMeals.length} refeições`;
+      weekProgress.style.width = `${pct}%`;
+      weekPercent.textContent = `${pct}% semana`;
+    }
+
+    function renderFilters() {
+      filterButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+      });
+    }
+
+    function createCard(day, card) {
+      if (card.treino) {
+        const treinoCard = document.createElement('div');
+        treinoCard.className = 'card treino-card';
+        treinoCard.innerHTML = `
+          <div class="treino-inner">
+            <div class="treino-badge">💪</div>
+            <div class="treino-text">${card.text}</div>
+          </div>
+        `;
+        return treinoCard;
+      }
+
+      const isDone = !!done[card.id];
+      const isExpanded = !!expanded[card.id];
+
+      const cardEl = document.createElement('div');
+      cardEl.className = `card clickable${isDone ? ' done' : ''}`;
+
+      const bodyClass = isExpanded ? '' : 'collapsed';
+      const checkClass = isDone ? 'card-check checked' : 'card-check';
+      const statusClass = isDone ? 'status-btn done' : 'status-btn';
+
+      cardEl.innerHTML = `
+        <div class="card-top">
+          <div class="card-emoji">${card.emoji}</div>
+          <div class="card-meta">
+            <div class="card-title">${card.title}</div>
+            <div class="card-time">${card.time}</div>
+          </div>
+          <div class="${checkClass}">${isDone ? '✓' : ''}</div>
+        </div>
+        <div class="card-body ${bodyClass}">${card.text}</div>
+        <div class="card-actions">
+          <button class="mini-btn">${isExpanded ? '▲ menos' : '▼ mais'}</button>
+          <button class="${statusClass}">${isDone ? '✓ feito' : 'registrar'}</button>
+        </div>
+      `;
+
+      const top = cardEl.querySelector('.card-top');
+      const miniBtn = cardEl.querySelector('.mini-btn');
+      const check = cardEl.querySelector('.card-check');
+      const statusBtn = cardEl.querySelector('.status-btn');
+
+      top.addEventListener('click', () => toggleExpand(card.id));
+      miniBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleExpand(card.id);
+      });
+      check.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDone(card.id, day.key);
+      });
+      statusBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDone(card.id, day.key);
+      });
+
+      return cardEl;
+    }
+
+    function createColumn(day) {
+      const todayColIdx = getTodayColumnIndex();
+      const isToday = day.id === todayColIdx;
+      const mealCards = day.cards.filter(c => !c.treino);
+      const doneCount = mealCards.filter(c => done[c.id]).length;
+      const pct = mealCards.length ? Math.round((doneCount / mealCards.length) * 100) : 0;
+
+      const col = document.createElement('div');
+      col.className = `col${isToday ? ' col-today' : ''}`;
+
+      const header = document.createElement('div');
+      header.className = 'col-header';
+      header.style.background = day.headerBg;
+      header.innerHTML = `
+        <div class="col-day-row">
+          <div>
+            <div class="col-day-name" style="color:${day.headerTxt}">${day.short}</div>
+            <div class="col-day-full" style="color:${day.headerTxt}">${day.full}</div>
+          </div>
+          ${isToday ? '<div class="today-pill">HOJE</div>' : ''}
+        </div>
+        <div class="col-tag" style="background:${day.tagBg}; color:${day.tagColor}">${day.tag}</div>
+        <div class="col-progress">
+          <div class="col-progress-bar">
+            <div class="col-progress-fill" style="width:${pct}%; background:${pct === 100 ? '#22c55e' : 'rgba(255,255,255,0.6)'}"></div>
+          </div>
+          <div class="col-progress-label">${doneCount}/${mealCards.length} refeições ${pct === 100 ? '🎉' : ''}</div>
+        </div>
+      `;
+
+      const cardsWrap = document.createElement('div');
+      cardsWrap.className = 'col-cards';
+      day.cards.forEach(card => cardsWrap.appendChild(createCard(day, card)));
+
+      col.appendChild(header);
+      col.appendChild(cardsWrap);
+      return col;
+    }
+
+    function render() {
+      renderHeaderStats();
+      renderFilters();
+      board.innerHTML = '';
+      DAYS.filter(matchesFilter).forEach(day => board.appendChild(createColumn(day)));
+    }
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filter = btn.dataset.filter;
+        saveState();
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
