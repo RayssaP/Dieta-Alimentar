@@ -776,18 +776,74 @@
 
     .hidden { display: none !important; }
 
+    .mobile-only { display: none; }
+    .desktop-only { display: flex; }
+    .legend-toggle-row { display: none; }
+    .legend-toggle-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      transition: all .16s ease;
+      font-family: 'DM Mono', monospace;
+      color: var(--muted);
+      border-radius: 14px;
+      font-size: 11px;
+      padding: 4px 12px;
+      white-space: nowrap;
+    }
+
     @media (max-width: 1100px) {
       .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 12; }
       .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
 
     @media (max-width: 768px) {
-      .header, .top-nav, .toolbar, .stats-bar { padding-left: 14px; padding-right: 14px; }
-      .col { width: 86vw; max-width: 290px; }
-      .col-cards { max-height: none; }
+      .header, .top-nav, .toolbar, .stats-bar { padding-left: 12px; padding-right: 12px; }
+      .header {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      .header-left { gap: 10px; }
+      .header-left > span { font-size: 20px !important; }
+      .header-title { font-size: 16px; line-height: 1.1; }
+      .header-sub { font-size: 9px; line-height: 1.25; max-width: 220px; }
+      .week-badge { font-size: 10px; padding: 3px 10px; }
+      #todayBadge { font-size: 9px !important; }
+      .top-nav, .toolbar { gap: 6px; }
+      .top-nav { padding-top: 8px; padding-bottom: 8px; }
+      .nav-btn { padding: 6px 10px; border-radius: 12px; font-size: 10px; }
+      .toolbar { padding-top: 6px; padding-bottom: 6px; }
+      .toolbar-label { display: none; }
+      .filter-chip { padding: 4px 10px; font-size: 10px; }
       .toolbar-spacer { margin-left: 0; }
+      .progress-track { width: 84px; }
+      .progress-label { font-size: 9px; }
+      .stats-bar { display: none; }
+      .stats-bar.mobile-open { display: flex; }
+      .legend-toggle-row {
+        display: flex;
+        padding: 6px 12px;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+      }
+      .legend-toggle-row .legend-toggle-btn.active {
+        background: var(--green);
+        color: #fff;
+        border-color: var(--green);
+      }
+      .mobile-only { display: flex; }
+      .desktop-only { display: none !important; }
+      .board { padding-top: 10px; }
+      .col { width: 85vw; max-width: 280px; }
+      .col-cards { max-height: none; }
       .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-      .page-content { padding: 14px; }
+      .page-content { padding: 12px; gap: 12px; }
+      .panel { padding: 12px; border-radius: 14px; }
+      .panel h2 { font-size: 18px; }
+      .panel-sub { font-size: 11px; }
       .table-wrap table { min-width: 520px; }
     }
   </style>
@@ -817,6 +873,10 @@
       </div>
     </div>
 
+    <div class="legend-toggle-row mobile-only">
+      <button class="legend-toggle-btn" id="mobileLegendToggle">ℹ️ legenda</button>
+    </div>
+
     <div class="page active" id="page-kanban">
       <div class="toolbar">
         <span class="toolbar-label">filtrar:</span>
@@ -830,7 +890,7 @@
         </div>
       </div>
 
-      <div class="stats-bar">
+      <div class="stats-bar" id="statsBar">
         <div class="stat-chip"><div class="stat-dot" style="background:#2d6a4f"></div>Treino noturno: Seg + Qua</div>
         <div class="stat-chip"><div class="stat-dot" style="background:#1e40af"></div>Treino manhã: Sáb ou Dom</div>
         <div class="stat-chip"><div class="stat-dot" style="background:#5b21b6"></div>Vinho: Qui + Sáb</div>
@@ -1814,3 +1874,14 @@ ${JSON.stringify(getAppState())}
   </script>
 </body>
 </html>
+      const mobileLegendToggle = document.getElementById('mobileLegendToggle');
+      const statsBar = document.getElementById('statsBar');
+      if (mobileLegendToggle && statsBar) {
+        mobileLegendToggle.addEventListener('click', () => {
+          const isOpen = statsBar.classList.contains('mobile-open');
+          statsBar.classList.toggle('mobile-open', !isOpen);
+          mobileLegendToggle.classList.toggle('active', !isOpen);
+          mobileLegendToggle.textContent = isOpen ? 'ℹ️ legenda' : '✕ fechar legenda';
+        });
+      }
+
