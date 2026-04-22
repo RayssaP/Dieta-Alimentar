@@ -778,18 +778,118 @@
 
     .mobile-only { display: none; }
     .desktop-only { display: flex; }
-    .legend-toggle-row { display: none; }
-    .legend-toggle-btn {
+
+    .icon-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .mobile-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.38);
+      z-index: 250;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .mobile-modal.open { display: flex; }
+
+    .mobile-sheet {
+      width: min(100%, 480px);
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.20);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .mobile-sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-sheet-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--slate);
+    }
+
+    .mobile-sheet-close {
       border: 1px solid var(--border);
       background: #fff;
+      border-radius: 999px;
+      width: 30px;
+      height: 30px;
       cursor: pointer;
-      transition: all .16s ease;
-      font-family: 'DM Mono', monospace;
       color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .mobile-sheet-body {
+      padding: 14px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: min(70vh, 520px);
+      overflow: auto;
+    }
+
+    .mobile-filter-list,
+    .mobile-legend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobile-filter-btn {
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
       border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-family: 'DM Mono', monospace;
       font-size: 11px;
-      padding: 4px 12px;
-      white-space: nowrap;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .mobile-filter-btn.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .mobile-legend-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--slate2);
+      line-height: 1.45;
+    }
+
+    .mobile-legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-top: 3px;
+      flex-shrink: 0;
     }
 
     @media (max-width: 1100px) {
@@ -811,30 +911,21 @@
       .header-sub { font-size: 9px; line-height: 1.25; max-width: 220px; }
       .week-badge { font-size: 10px; padding: 3px 10px; }
       #todayBadge { font-size: 9px !important; }
-      .top-nav, .toolbar { gap: 6px; }
-      .top-nav { padding-top: 8px; padding-bottom: 8px; }
-      .nav-btn { padding: 6px 10px; border-radius: 12px; font-size: 10px; }
-      .toolbar { padding-top: 6px; padding-bottom: 6px; }
-      .toolbar-label { display: none; }
-      .filter-chip { padding: 4px 10px; font-size: 10px; }
-      .toolbar-spacer { margin-left: 0; }
-      .progress-track { width: 84px; }
-      .progress-label { font-size: 9px; }
-      .stats-bar { display: none; }
-      .stats-bar.mobile-open { display: flex; }
-      .legend-toggle-row {
-        display: flex;
-        padding: 6px 12px;
-        background: #fff;
-        border-bottom: 1px solid var(--border);
+      .top-nav {
+        gap: 6px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        flex-wrap: nowrap;
         overflow-x: auto;
       }
-      .legend-toggle-row .legend-toggle-btn.active {
-        background: var(--green);
-        color: #fff;
-        border-color: var(--green);
-      }
-      .mobile-only { display: flex; }
+      .nav-btn { padding: 6px 10px; border-radius: 12px; font-size: 10px; }
+      .toolbar, .stats-bar { display: none !important; }
+      .toolbar-label { display: none; }
+      .filter-chip { padding: 4px 10px; font-size: 10px; }
+      .toolbar-spacer { margin-left: auto; }
+      .progress-track { width: 84px; }
+      .progress-label { font-size: 9px; }
+      .mobile-only { display: inline-flex; }
       .desktop-only { display: none !important; }
       .board { padding-top: 10px; }
       .col { width: 85vw; max-width: 280px; }
@@ -868,13 +959,50 @@
       <button class="nav-btn active" data-page="kanban">📋 Kanban</button>
       <button class="nav-btn" data-page="compras">🛒 Lista de compras</button>
       <button class="nav-btn" data-page="academia">🏋️ Academia & progresso</button>
+      <button class="nav-btn icon-nav-btn mobile-only" id="openFilterModal" aria-label="Abrir filtros" title="Filtros">⚙️</button>
+      <button class="nav-btn icon-nav-btn mobile-only" id="openLegendModal" aria-label="Abrir legendas" title="Legendas">ℹ️</button>
       <div class="toolbar-spacer">
         <span class="pill info" id="syncStatusPill">☁️ local</span>
       </div>
     </div>
 
-    <div class="legend-toggle-row mobile-only">
-      <button class="legend-toggle-btn" id="mobileLegendToggle">ℹ️ legenda</button>
+    <div class="mobile-modal" id="filterModal" aria-hidden="true">
+      <div class="mobile-sheet" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle">
+        <div class="mobile-sheet-head">
+          <div class="mobile-sheet-title" id="filterModalTitle">filtros do kanban</div>
+          <button class="mobile-sheet-close" data-close-modal="filterModal">✕</button>
+        </div>
+        <div class="mobile-sheet-body">
+          <div class="mobile-filter-list" id="mobileFilterList">
+            <button class="mobile-filter-btn" data-mobile-filter="all">Todos os dias</button>
+            <button class="mobile-filter-btn" data-mobile-filter="treino">🏋️ Dias de treino</button>
+            <button class="mobile-filter-btn" data-mobile-filter="vinho">🍷 Noite de vinho</button>
+            <button class="mobile-filter-btn" data-mobile-filter="descanso">😴 Descanso</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+            <div class="progress-track" style="width:100%; max-width:none;"><div class="progress-fill" id="weekProgressMobile"></div></div>
+            <span class="progress-label" id="weekPercentMobile">0% semana</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-modal" id="legendModal" aria-hidden="true">
+      <div class="mobile-sheet" role="dialog" aria-modal="true" aria-labelledby="legendModalTitle">
+        <div class="mobile-sheet-head">
+          <div class="mobile-sheet-title" id="legendModalTitle">legendas do kanban</div>
+          <button class="mobile-sheet-close" data-close-modal="legendModal">✕</button>
+        </div>
+        <div class="mobile-sheet-body">
+          <div class="mobile-legend-list">
+            <div class="mobile-legend-item"><span class="mobile-legend-dot" style="background:#2d6a4f"></span><span>Treino noturno: Seg + Qua</span></div>
+            <div class="mobile-legend-item"><span class="mobile-legend-dot" style="background:#1e40af"></span><span>Treino manhã: Sáb ou Dom</span></div>
+            <div class="mobile-legend-item"><span class="mobile-legend-dot" style="background:#5b21b6"></span><span>Vinho: Qui + Sáb</span></div>
+            <div class="mobile-legend-item"><span class="mobile-legend-dot" style="background:#ea580c"></span><span>Faixa laranja = momento do treino</span></div>
+            <div class="mobile-legend-item"><span class="mobile-legend-dot" style="background:#52b788"></span><span>Card verde = refeição registrada</span></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="page active" id="page-kanban">
@@ -1258,6 +1386,11 @@
     const driveConnPill = document.getElementById('driveConnPill');
     const lastSyncPill = document.getElementById('lastSyncPill');
     const syncStatusPill = document.getElementById('syncStatusPill');
+    const weekProgressMobile = document.getElementById('weekProgressMobile');
+    const weekPercentMobile = document.getElementById('weekPercentMobile');
+    const mobileFilterButtons = document.querySelectorAll('[data-mobile-filter]');
+    const filterModal = document.getElementById('filterModal');
+    const legendModal = document.getElementById('legendModal');
 
     function showToast(msg) {
       toast.textContent = msg;
@@ -1337,10 +1470,13 @@
       todayBadge.textContent = `Hoje: ${todayDoneMeals}/${todayMeals.length} refeições`;
       weekProgress.style.width = `${pct}%`;
       weekPercent.textContent = `${pct}% semana`;
+      if (weekProgressMobile) weekProgressMobile.style.width = `${pct}%`;
+      if (weekPercentMobile) weekPercentMobile.textContent = `${pct}% semana`;
     }
 
     function renderFilters() {
       filterButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
+      mobileFilterButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.mobileFilter === filter));
     }
 
     function buildPreviewText(text, limit=98) {
@@ -1816,6 +1952,23 @@ ${JSON.stringify(getAppState())}
       showToast('Google Drive desconectado neste navegador.');
     }
 
+    function openMobileModal(modalEl) {
+      if (!modalEl) return;
+      modalEl.classList.add('open');
+      modalEl.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeMobileModal(modalEl) {
+      if (!modalEl) return;
+      modalEl.classList.remove('open');
+      modalEl.setAttribute('aria-hidden', 'true');
+    }
+
+    function closeAllMobileModals() {
+      closeMobileModal(filterModal);
+      closeMobileModal(legendModal);
+    }
+
     function renderAll() {
       renderKanban();
       renderShopping();
@@ -1831,6 +1984,26 @@ ${JSON.stringify(getAppState())}
     }));
 
     navButtons.forEach(btn => btn.addEventListener('click', () => setPage(btn.dataset.page)));
+    mobileFilterButtons.forEach(btn => btn.addEventListener('click', () => {
+      filter = btn.dataset.mobileFilter;
+      saveState();
+      renderKanban();
+      closeMobileModal(filterModal);
+    }));
+
+    const openFilterModalBtn = document.getElementById('openFilterModal');
+    const openLegendModalBtn = document.getElementById('openLegendModal');
+    if (openFilterModalBtn) openFilterModalBtn.addEventListener('click', () => openMobileModal(filterModal));
+    if (openLegendModalBtn) openLegendModalBtn.addEventListener('click', () => openMobileModal(legendModal));
+    document.querySelectorAll('[data-close-modal]').forEach(btn => btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-close-modal');
+      closeMobileModal(document.getElementById(id));
+    }));
+    [filterModal, legendModal].forEach(modal => {
+      if (!modal) return;
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeMobileModal(modal); });
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllMobileModals(); });
 
     document.getElementById('addCustomItemBtn').addEventListener('click', addCustomItem);
     document.getElementById('addWorkoutBtn').addEventListener('click', addWorkout);
@@ -1874,14 +2047,3 @@ ${JSON.stringify(getAppState())}
   </script>
 </body>
 </html>
-      const mobileLegendToggle = document.getElementById('mobileLegendToggle');
-      const statsBar = document.getElementById('statsBar');
-      if (mobileLegendToggle && statsBar) {
-        mobileLegendToggle.addEventListener('click', () => {
-          const isOpen = statsBar.classList.contains('mobile-open');
-          statsBar.classList.toggle('mobile-open', !isOpen);
-          mobileLegendToggle.classList.toggle('active', !isOpen);
-          mobileLegendToggle.textContent = isOpen ? 'ℹ️ legenda' : '✕ fechar legenda';
-        });
-      }
-
